@@ -18,7 +18,7 @@
 
 Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員只能讀取或建立自己的訂單。依 2026-07-26 的決策，本專案不實作 RBAC，因此商品新增、修改與刪除仍沒有角色權限保護，管理介面只作為作品集 Demo。
 
-下一階段的主要缺口是補齊購物車、結帳與訂單測試、整理圖片授權、處理相依性安全升級，以及完成專案文件。
+下一階段的主要缺口是補齊訂單列表測試、整理圖片授權、處理相依性安全升級，以及完成專案文件。
 
 ### 里程碑總覽
 
@@ -32,7 +32,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | 商品管理 Demo | 已完成 | 列表、新增、修改、刪除、表單驗證與無 RBAC 揭露 |
 | 響應式與可用性 | 基礎完成 | 已有斷點、焦點、ARIA 與 reduced motion；仍待最終完整驗收 |
 | 圖片與內容授權 | 未完成 | 尚待逐筆確認並保存來源、作者與授權資訊 |
-| 前端自動化測試 | 進行中 | Vitest、商品管理、登入、登出與 Session 還原已完成；尚待購物車、結帳與訂單流程 |
+| 前端自動化測試 | 進行中 | 商品管理、會員、購物車與結帳已完成；尚待訂單列表流程 |
 | README 與交付文件 | 未完成 | 尚待補齊完整啟動、安全機制、資料庫與功能說明 |
 
 ## 2. 已完成
@@ -122,7 +122,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 |---|---|
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
-| `npm test` | 通過，7 個測試檔、28 個測試案例 |
+| `npm test` | 通過，10 個測試檔、39 個測試案例 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
 | 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程與 390px 列表／表單；暫存商品已刪除，console 無 error／warning |
@@ -136,6 +136,9 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 測試商品管理新增、編輯與刪除操作，以及必填錯誤後的欄位聚焦。
 - [x] 測試會員 API 的表單登入格式、註冊與登出 CSRF，以及 `/users/me` Session 查詢。
 - [x] 測試登入成功導回、登入失敗訊息、Session 還原與失效，以及登出成功／失敗的會員狀態。
+- [x] 測試購物車 localStorage 還原、損壞資料 fallback、相同商品合併、數量限制、移除與清空。
+- [x] 測試訂單 API 的 CSRF 建立請求與訂單列表分頁查詢參數。
+- [x] 測試未登入結帳導向、商品下架、庫存不足、成功建立訂單與 Session 過期流程。
 
 ## 3. 尚未完成
 
@@ -147,7 +150,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ### 3.2 測試與文件
 
-- [ ] 補齊購物車、結帳與訂單的前端自動化測試。
+- [ ] 補齊我的訂單頁面的載入、空資料、分頁、錯誤與 Session 過期測試。
 - [ ] 更新根目錄 `README.md`，加入前後端啟動方式、Session／CSRF 說明、資料庫重建方式與功能完成度。
 - [ ] 所有功能完成後，重新進行桌面、平板、手機與鍵盤操作驗收。
 
@@ -180,7 +183,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ## 6. 建議後續順序
 
-1. 補齊購物車、結帳與訂單的前端自動化測試。
+1. 補齊我的訂單頁面的前端自動化測試。
 2. 整理商品圖片授權來源與替換策略。
 3. 以獨立功能評估並處理 React Router 與 ESLint 的主要版本安全升級。
 4. 更新 README 與完整啟動說明。
