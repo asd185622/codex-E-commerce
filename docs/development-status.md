@@ -30,7 +30,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | 會員與 Session | 已完成 | 註冊、登入、登出、Session 還原與 CSRF |
 | 訂單 | 已完成 | 建立訂單、會員資料隔離與我的訂單 |
 | 商品管理 Demo | 已完成 | 列表、新增、修改、刪除、表單驗證與無 RBAC 揭露 |
-| 響應式與可用性 | 基礎完成 | 已有斷點、焦點、ARIA 與 reduced motion；仍待最終完整驗收 |
+| 響應式與可用性 | 已完成 | 1440px、768px、390px 的 11 條主要路由皆無水平溢位，焦點與 ARIA 基礎已驗證 |
 | 圖片與內容授權 | 已完成（前端） | 已建立 8 張原創本機圖，依舊 CDN 網址在前端替換顯示；後端資料未修改 |
 | 前端自動化測試 | 核心完成 | 商品管理、會員、購物車、結帳與訂單列表皆有 jsdom 自動化測試 |
 | 前端相依性安全 | 已完成（正式環境） | React Router 已升級至 8.3.0；正式環境 0 項漏洞，開發工具依目前決策不升級 |
@@ -117,6 +117,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 404 頁使用唯一的頁面 `<h1>`，保留清楚的文件標題層級。
 - [x] 支援 `prefers-reduced-motion`。
 - [x] 目前完成頁面均具有適用的載入、錯誤、空資料或圖片失敗狀態。
+- [x] 修正 768px 平板寬度下商品篩選列因第一欄最小內容寬度造成的水平溢位。
 
 ### 2.8 已完成驗證
 
@@ -131,7 +132,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
-| 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程；390px 下首頁、商品、購物袋、會員、管理 Demo 與 404 共 11 條路由皆無水平溢位；skip link 主要內容焦點與 404 主標題驗證通過，console 無 error／warning |
+| 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原與 skip link 目標焦點通過，console 無 error／warning；建立測試訂單尚待確認 |
 
 ### 2.9 前端自動化測試基礎
 
@@ -163,7 +164,8 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 ### 3.2 文件與最終驗收
 
 - [x] 更新根目錄 `README.md`，加入前後端啟動方式、Session／CSRF 說明、資料庫重建方式、API 摘要、驗證指令與功能完成度。
-- [ ] 所有功能完成後，重新進行連接本機後端的桌面、平板、手機、鍵盤與完整流程驗收。
+- [x] 連接本機後端完成 1440px、768px、390px 的 11 條主要路由與 skip link 焦點驗收。
+- [ ] 建立一筆本機測試訂單，確認購物袋送出、訂單成功訊息與我的訂單內容後完成最終驗收。
 
 ### 3.3 相依性維護
 
@@ -195,7 +197,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ## 6. 建議後續順序
 
-1. 進行連接本機後端的桌面、平板、手機、鍵盤與完整流程最終驗收。
+1. 取得建立本機測試訂單的確認後，完成訂單送出與我的訂單頁最終驗收。
 
 ## 7. 本機開發指令
 

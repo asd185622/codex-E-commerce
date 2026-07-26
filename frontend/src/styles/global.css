@@ -1953,7 +1953,7 @@ textarea.input-error {
   }
 
   .catalog-tools {
-    grid-template-columns: 1fr 190px 190px;
+    grid-template-columns: minmax(0, 1fr) 190px 190px;
   }
 
   .admin-toolbar {
