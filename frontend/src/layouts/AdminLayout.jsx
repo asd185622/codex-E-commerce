@@ -29,7 +29,7 @@ function AdminLayout() {
       </header>
 
       <ScrollToTop />
-      <main id="admin-main-content">
+      <main id="admin-main-content" tabIndex="-1">
         <Outlet />
       </main>
     </div>

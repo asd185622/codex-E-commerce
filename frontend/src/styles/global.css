@@ -101,6 +101,11 @@ p {
   flex: 1;
 }
 
+#main-content:focus,
+#admin-main-content:focus {
+  outline: none;
+}
+
 .page-width {
   width: min(calc(100% - 48px), var(--page-width));
   margin-inline: auto;

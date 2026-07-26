@@ -12,7 +12,7 @@ function StoreLayout() {
       </a>
       <SiteHeader />
       <ScrollToTop />
-      <main id="main-content">
+      <main id="main-content" tabIndex="-1">
         <Outlet />
       </main>
       <SiteFooter />

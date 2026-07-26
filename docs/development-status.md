@@ -111,7 +111,9 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 - [x] 已建立桌面、平板與手機斷點。
 - [x] 已加入鍵盤焦點樣式與 skip link。
+- [x] 商城與管理 Demo 的 skip link 會將焦點移至可聚焦的主要內容區，讓鍵盤使用者略過重複導覽。
 - [x] 圖示按鈕、載入狀態與表單錯誤具備基本 ARIA 標記。
+- [x] 404 頁使用唯一的頁面 `<h1>`，保留清楚的文件標題層級。
 - [x] 支援 `prefers-reduced-motion`。
 - [x] 目前完成頁面均具有適用的載入、錯誤、空資料或圖片失敗狀態。
 
@@ -123,12 +125,12 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 |---|---|
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
-| `npm test` | 通過，11 個測試檔、46 個測試案例 |
+| `npm test` | 通過，13 個測試檔、49 個測試案例 |
 | `npm audit --omit=dev` | 通過，正式環境相依性 0 項漏洞 |
 | `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
-| 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程與 390px 列表／表單；React Router 8 升級後另通過商品列表、購物袋、商品管理路由，console 無 error／warning |
+| 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程；390px 下首頁、商品、購物袋、會員、管理 Demo 與 404 共 11 條路由皆無水平溢位；skip link 主要內容焦點與 404 主標題驗證通過，console 無 error／warning |
 
 ### 2.9 前端自動化測試基礎
 
@@ -144,6 +146,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 測試未登入結帳導向、商品下架、庫存不足、成功建立訂單與 Session 過期流程。
 - [x] 測試我的訂單頁會員確認、未登入導向、載入、空資料、訂單內容、成功提示與分頁。
 - [x] 測試訂單列表 API 錯誤重試及 401 Session 過期時清除會員狀態。
+- [x] 測試商城／管理 Demo 的 skip link 目標可聚焦，以及 404 頁具有頁面主標題與返回入口。
 
 ## 3. 尚未完成
 
