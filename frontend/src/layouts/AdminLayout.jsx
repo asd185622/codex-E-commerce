@@ -1,5 +1,5 @@
 // 將商品管理 Demo 與消費者商城版型分離，並固定揭露目前沒有 RBAC。
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router";
 import ScrollToTop from "../components/ScrollToTop";
 
 function AdminLayout() {

@@ -1,5 +1,5 @@
 // 顯示商品列表中的單張商品卡片與庫存狀態。
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { getCategoryLabel } from "../utils/categories";
 import { formatPrice } from "../utils/formatters";
 import ProductImage from "./ProductImage";

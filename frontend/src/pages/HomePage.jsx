@@ -1,6 +1,6 @@
 // 首頁載入最新商品，組合主打商品與最新上架區塊。
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { getProducts } from "../api/products";
 import { ArrowIcon } from "../components/icons";
 import ProductCard from "../components/ProductCard";

@@ -1,6 +1,6 @@
 // 共用新增與編輯商品流程，依路由參數決定載入與送出的 API。
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router";
 import { createProduct, getProduct, updateProduct } from "../api/products";
 import ProductForm from "../components/ProductForm";
 import StatusPanel from "../components/StatusPanel";

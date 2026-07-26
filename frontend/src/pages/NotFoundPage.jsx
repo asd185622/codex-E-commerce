@@ -1,5 +1,5 @@
 // 顯示找不到路由時的 404 提示與返回首頁入口。
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import StatusPanel from "../components/StatusPanel";
 
 function NotFoundPage() {

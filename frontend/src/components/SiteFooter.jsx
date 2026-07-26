@@ -1,5 +1,5 @@
 // 顯示全站共用頁尾與作品集相關入口。
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 function SiteFooter() {
   return (

@@ -1,6 +1,6 @@
 // 顯示單一商品資料，並處理購買數量與加入購物車操作。
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { getProduct } from "../api/products";
 import ProductImage from "../components/ProductImage";
 import StatusPanel from "../components/StatusPanel";

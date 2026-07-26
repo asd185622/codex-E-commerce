@@ -22,7 +22,7 @@
 - React
 - JavaScript，不使用 TypeScript
 - Vite
-- React Router
+- React Router 8
 - Axios
 - React Context
 - 一般 CSS

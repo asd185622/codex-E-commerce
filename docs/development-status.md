@@ -18,13 +18,13 @@
 
 Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員只能讀取或建立自己的訂單。依 2026-07-26 的決策，本專案不實作 RBAC，因此商品新增、修改與刪除仍沒有角色權限保護，管理介面只作為作品集 Demo。
 
-下一階段的主要缺口是完成商品圖片替換與本機化、處理相依性安全升級、完成專案文件，以及最後的跨瀏覽器與鍵盤驗收。
+下一階段的主要缺口是完成商品圖片替換與本機化、處理 ESLint 開發工具相依性安全升級、完成專案文件，以及最後的跨瀏覽器與鍵盤驗收。
 
 ### 里程碑總覽
 
 | 領域 | 狀態 | 說明 |
 |---|---|---|
-| 前端基礎與共用架構 | 已完成 | Vite、Router、Axios、Context、共用版面與狀態元件 |
+| 前端基礎與共用架構 | 已完成 | Vite、React Router 8、Axios、Context、共用版面與狀態元件 |
 | 商品瀏覽 | 已完成 | 首頁、列表、搜尋、分類、排序、分頁與商品詳情 |
 | 購物與結帳 | 已完成 | 購物車保存、庫存重查、登入導向與建立訂單 |
 | 會員與 Session | 已完成 | 註冊、登入、登出、Session 還原與 CSRF |
@@ -33,13 +33,14 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | 響應式與可用性 | 基礎完成 | 已有斷點、焦點、ARIA 與 reduced motion；仍待最終完整驗收 |
 | 圖片與內容授權 | 盤點完成 | 已建立 8 張現有圖片清冊；6 張可追溯，2 張查核未完成，正式替換與本機化待確認 |
 | 前端自動化測試 | 核心完成 | 商品管理、會員、購物車、結帳與訂單列表皆有 jsdom 自動化測試 |
+| 前端相依性安全 | 部分完成 | React Router 已升級至 8.3.0；ESLint 開發工具相依性仍待升級 |
 | README 與交付文件 | 未完成 | 尚待補齊完整啟動、安全機制、資料庫與功能說明 |
 
 ## 2. 已完成
 
 ### 2.1 前端基礎與共用架構
 
-- [x] 使用 React、JavaScript、Vite、React Router、Axios、React Context 與一般 CSS。
+- [x] 使用 React、JavaScript、Vite、React Router 8、Axios、React Context 與一般 CSS。
 - [x] 前端位於 `frontend/`，後端維持在 `springboot-mall/`。
 - [x] Vite proxy 將前端 API 請求轉送到 `http://localhost:8080`。
 - [x] Axios client 集中管理 API base URL、逾時與 Cookie 傳送。
@@ -123,9 +124,11 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
 | `npm test` | 通過，11 個測試檔、46 個測試案例 |
+| `npm audit --omit=dev` | 通過，正式環境相依性 0 項漏洞 |
+| `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
-| 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程與 390px 列表／表單；暫存商品已刪除，console 無 error／warning |
+| 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程與 390px 列表／表單；React Router 8 升級後另通過商品列表、購物袋、商品管理路由，console 無 error／warning |
 
 ### 2.9 前端自動化測試基礎
 
@@ -159,9 +162,10 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ### 3.3 相依性維護
 
-- [ ] 評估 React Router 主要版本升級及相容性；目前 `npm audit` 回報 React Router 安全公告。
+- [x] React Router 由 7.18.1 升級至 8.3.0，移除 `react-router-dom` 並改由 `react-router` 匯入；本機 Node 24.15.0 與 React 19.2.8 符合版本需求。
+- [x] React Router 升級後重新執行正式環境 audit、test、lint、build 與商品列表／購物袋／管理 Demo 核心瀏覽器路由；均通過。
 - [ ] 評估 ESLint 10 升級及設定相容性；目前 ESLint／minimatch 相依路徑有安全公告。
-- [ ] 升級後重新執行 `npm audit`、test、lint、build 與核心瀏覽器流程。
+- [ ] ESLint 升級後重新執行完整 `npm audit`、test、lint 與 build。
 
 ## 4. 已確認的規格調整
 
@@ -187,7 +191,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 ## 6. 建議後續順序
 
 1. 確認商品替換圖片與本機保存方式，再更新現有 `imageUrl`。
-2. 以獨立功能評估並處理 React Router 與 ESLint 的主要版本安全升級。
+2. 以獨立功能評估並處理 ESLint 10 的主要版本安全升級。
 3. 更新 README 與完整啟動說明。
 4. 進行連接本機後端的手機版、無障礙與完整流程最終驗收。
 

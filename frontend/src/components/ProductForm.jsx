@@ -1,6 +1,6 @@
 // 提供新增與編輯頁共用的商品欄位、錯誤關聯與圖片預覽。
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { categories, getCategoryLabel } from "../utils/categories";
 import { formatPrice } from "../utils/formatters";
 import ProductImage from "./ProductImage";

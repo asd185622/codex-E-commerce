@@ -1,6 +1,6 @@
 // 提供管理 Demo 的商品查詢、篩選、分頁、編輯入口與刪除操作。
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 import { deleteProduct, getProducts } from "../api/products";
 import ProductImage from "../components/ProductImage";
 import StatusPanel from "../components/StatusPanel";

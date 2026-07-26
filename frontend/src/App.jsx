@@ -1,5 +1,5 @@
 // 定義商店目前可瀏覽的所有前端路由。
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router";
 import AdminLayout from "./layouts/AdminLayout";
 import StoreLayout from "./layouts/StoreLayout";
 import AdminProductFormPage from "./pages/AdminProductFormPage";

@@ -1,6 +1,6 @@
 // 顯示購物車內容，並在確認最新商品與庫存後建立會員訂單。
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { createOrder } from "../api/orders";
 import { getProduct } from "../api/products";
 import ProductImage from "../components/ProductImage";
