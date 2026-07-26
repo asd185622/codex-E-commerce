@@ -18,7 +18,7 @@
 
 Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員只能讀取或建立自己的訂單。依 2026-07-26 的決策，本專案不實作 RBAC，因此商品新增、修改與刪除仍沒有角色權限保護，管理介面只作為作品集 Demo。
 
-商品圖片替換與本機化已完成；下一階段主要是最後的跨瀏覽器、響應式、鍵盤與完整流程驗收。
+商品圖片替換、本機化與最終整合驗收均已完成；目前規劃範圍沒有未完成的必要功能。
 
 ### 里程碑總覽
 
@@ -132,7 +132,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
-| 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原與 skip link 目標焦點通過，console 無 error／warning；建立測試訂單尚待確認 |
+| 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原、建立訂單、訂單重新載入與 skip link 目標焦點通過，console 無 error／warning |
 
 ### 2.9 前端自動化測試基礎
 
@@ -150,7 +150,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 測試訂單列表 API 錯誤重試及 401 Session 過期時清除會員狀態。
 - [x] 測試商城／管理 Demo 的 skip link 目標可聚焦，以及 404 頁具有頁面主標題與返回入口。
 
-## 3. 尚未完成
+## 3. 收尾狀態
 
 ### 3.1 圖片與內容授權
 
@@ -165,7 +165,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 - [x] 更新根目錄 `README.md`，加入前後端啟動方式、Session／CSRF 說明、資料庫重建方式、API 摘要、驗證指令與功能完成度。
 - [x] 連接本機後端完成 1440px、768px、390px 的 11 條主要路由與 skip link 焦點驗收。
-- [ ] 建立一筆本機測試訂單，確認購物袋送出、訂單成功訊息與我的訂單內容後完成最終驗收。
+- [x] 建立本機測試訂單 `SW-000001`，確認 NT$300 訂單成功訊息、購物袋清空、商品明細與重新整理後的 Session／訂單資料。
 
 ### 3.3 相依性維護
 
@@ -197,7 +197,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ## 6. 建議後續順序
 
-1. 取得建立本機測試訂單的確認後，完成訂單送出與我的訂單頁最終驗收。
+目前規劃範圍已完成。若後續要擴充部署、金流、配送、圖片上傳或權限功能，應先重新確認需求與後端變更範圍。
 
 ## 7. 本機開發指令
 
