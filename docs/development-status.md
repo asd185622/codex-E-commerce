@@ -18,7 +18,7 @@
 
 Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員只能讀取或建立自己的訂單。依 2026-07-26 的決策，本專案不實作 RBAC，因此商品新增、修改與刪除仍沒有角色權限保護，管理介面只作為作品集 Demo。
 
-下一階段的主要缺口是整理圖片授權、補自動化測試與完整專案文件。
+下一階段的主要缺口是補齊登入與結帳等前端整合測試、整理圖片授權、處理相依性安全升級，以及完成專案文件。
 
 ### 里程碑總覽
 
@@ -32,7 +32,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | 商品管理 Demo | 已完成 | 列表、新增、修改、刪除、表單驗證與無 RBAC 揭露 |
 | 響應式與可用性 | 基礎完成 | 已有斷點、焦點、ARIA 與 reduced motion；仍待最終完整驗收 |
 | 圖片與內容授權 | 未完成 | 尚待逐筆確認並保存來源、作者與授權資訊 |
-| 前端自動化測試 | 未完成 | 尚未建立可重複執行的瀏覽器／元件測試套件 |
+| 前端自動化測試 | 進行中 | Vitest 基礎與商品管理操作已完成；尚待登入、購物車、結帳與訂單流程 |
 | README 與交付文件 | 未完成 | 尚待補齊完整啟動、安全機制、資料庫與功能說明 |
 
 ## 2. 已完成
@@ -122,9 +122,18 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 |---|---|
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
+| `npm test` | 通過，4 個測試檔、17 個測試案例 |
 | `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
 | 瀏覽器手動檢查 | 通過商品管理 Demo 的空白驗證、新增、編輯、刪除完整流程與 390px 列表／表單；暫存商品已刪除，console 無 error／warning |
+
+### 2.9 前端自動化測試基礎
+
+- [x] 導入 Vitest、React Testing Library、jest-dom、user-event 與 jsdom。
+- [x] 提供 `npm test` 單次執行及 `npm run test:watch` 開發監看指令。
+- [x] 測試會員與商品表單驗證規則，包括價格、庫存必須為非負整數。
+- [x] 測試商品查詢及新增、修改、刪除 API，確認寫入操作會附帶 CSRF 標頭。
+- [x] 測試商品管理新增、編輯與刪除操作，以及必填錯誤後的欄位聚焦。
 
 ## 3. 尚未完成
 
@@ -136,11 +145,15 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ### 3.2 測試與文件
 
-- [ ] 為前端加入自動化測試；目前只有 lint 與 production build 驗證。
 - [ ] 補齊登入、登出、Session 還原、購物車、結帳與訂單的瀏覽器整合測試。
-- [ ] 補齊商品管理 Demo 的操作測試。
 - [ ] 更新根目錄 `README.md`，加入前後端啟動方式、Session／CSRF 說明、資料庫重建方式與功能完成度。
 - [ ] 所有功能完成後，重新進行桌面、平板、手機與鍵盤操作驗收。
+
+### 3.3 相依性維護
+
+- [ ] 評估 React Router 主要版本升級及相容性；目前 `npm audit` 回報 React Router 安全公告。
+- [ ] 評估 ESLint 10 升級及設定相容性；目前 ESLint／minimatch 相依路徑有安全公告。
+- [ ] 升級後重新執行 `npm audit`、test、lint、build 與核心瀏覽器流程。
 
 ## 4. 已確認的規格調整
 
@@ -165,10 +178,11 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ## 6. 建議後續順序
 
-1. 建立前端自動化測試基礎，先涵蓋登入、結帳、訂單與商品管理核心流程。
+1. 補齊登入、Session 還原、購物車、結帳與訂單的前端自動化測試。
 2. 整理商品圖片授權來源與替換策略。
-3. 更新 README 與完整啟動說明。
-4. 進行手機版、無障礙與完整流程的最終驗收。
+3. 以獨立功能評估並處理 React Router 與 ESLint 的主要版本安全升級。
+4. 更新 README 與完整啟動說明。
+5. 進行手機版、無障礙與完整流程的最終驗收。
 
 ## 7. 本機開發指令
 
@@ -178,9 +192,10 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 cd frontend
 npm install
 npm run dev
+npm test
 ```
 
-Vite 專案目前使用 `npm run dev`，`package.json` 沒有設定 `npm start`。
+Vite 專案目前使用 `npm run dev`，`package.json` 沒有設定 `npm start`；`npm test` 會使用 Vitest 單次執行全部前端測試。
 
 ### 後端
 
