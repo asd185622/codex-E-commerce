@@ -61,3 +61,23 @@ export function getOrderErrorMessage(error, mode) {
     mode === "create" ? "目前無法建立訂單，請稍後再試。" : "目前無法取得訂單，請稍後再試。",
   );
 }
+
+export function getProductWriteErrorMessage(error, action) {
+  if (error.response?.status === 403) {
+    return "安全驗證已過期，請重新整理頁面後再試一次。";
+  }
+
+  if (error.response?.status === 404) {
+    return "找不到這件商品，內容可能已被其他操作移除。";
+  }
+
+  if (error.response?.status === 400) {
+    return "商品資料未通過後端驗證，請重新確認必填欄位、價格與庫存。";
+  }
+
+  const fallback = action === "delete"
+    ? "目前無法刪除商品，請稍後再試。"
+    : "目前無法儲存商品，請稍後再試。";
+
+  return getErrorMessage(error, fallback);
+}

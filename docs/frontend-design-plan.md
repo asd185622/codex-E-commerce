@@ -28,12 +28,12 @@
 - 一般 CSS
 - `localStorage`
 
-本階段不使用：
+本專案不使用：
 
 - Redux
 - Tailwind CSS
 - 大型 UI 元件庫
-- JWT 與管理員角色驗證（RBAC）
+- JWT 與管理員角色驗證（RBAC）；商品管理固定維持明確標示的 Demo
 
 ### 開發環境
 
@@ -269,11 +269,11 @@ frontend/src/
 因此：
 
 - `/users/{userId}/orders` 必須與目前 session 會員相同，避免跨會員存取。
-- `/admin/products` 仍是 Demo 管理介面，尚未加入角色與商品寫入權限驗證。
+- `/admin/products` 固定為 Demo 管理介面，不加入角色與商品寫入權限驗證。
 - 前端路由保護只改善操作流程，真正的權限判斷必須留在後端。
-- README 與管理頁需清楚揭露 RBAC 尚未實作。
+- README 與管理頁需清楚揭露本專案不實作 RBAC。
 
-本階段不新增 JWT、角色欄位或 RBAC；既有 MD5 會員資料需清除後重新註冊，不提供舊密碼相容層。
+本專案不新增 JWT、角色欄位或 RBAC；既有 MD5 會員資料需清除後重新註冊，不提供舊密碼相容層。
 
 ### 其他非本階段功能
 
