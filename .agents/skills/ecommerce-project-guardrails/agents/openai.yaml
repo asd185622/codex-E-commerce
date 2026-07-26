@@ -1,0 +1,4 @@
+interface:
+  display_name: "E-Commerce 專案護欄"
+  short_description: "安全維護前端、Session 與受保護的 Spring Boot 後端"
+  default_prompt: "Use $ecommerce-project-guardrails to continue this E-Commerce project from its current documented status while preserving frontend and backend boundaries."

@@ -1,0 +1,24 @@
+# IDE 與本機工具資料
+.idea/
+.skill-staging/
+.vscode/
+*.iml
+
+# 環境變數與敏感設定
+.env
+.env.*
+!.env.example
+*.local
+
+# 相依套件與建置輸出
+node_modules/
+dist/
+coverage/
+target/
+build/
+
+# 暫存、快取與記錄檔
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

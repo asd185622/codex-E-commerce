@@ -1,0 +1,7 @@
+# 排除前端相依套件、建置輸出與本機環境設定，避免誤提交產生的檔案。
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.local
