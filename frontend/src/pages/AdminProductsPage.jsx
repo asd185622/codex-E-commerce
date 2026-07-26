@@ -7,6 +7,7 @@ import StatusPanel from "../components/StatusPanel";
 import { categories, getCategoryLabel } from "../utils/categories";
 import { getErrorMessage, getProductWriteErrorMessage } from "../utils/errors";
 import { formatDateTime, formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 const PAGE_SIZE = 10;
 
@@ -240,7 +241,7 @@ function AdminProductsPage() {
                   <td>
                     <div className="admin-product-cell">
                       <div className="admin-product-thumb">
-                        <ProductImage src={product.imageUrl} alt={product.productName} />
+                        <ProductImage src={getProductImageUrl(product)} alt={product.productName} />
                       </div>
                       <div>
                         <strong>{product.productName}</strong>

@@ -7,6 +7,7 @@ import StatusPanel from "../components/StatusPanel";
 import { useUser } from "../hooks/useUser";
 import { getOrderErrorMessage } from "../utils/errors";
 import { formatDateTime, formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 const PAGE_SIZE = 5;
 
@@ -147,7 +148,10 @@ function OrdersPage() {
                 {(order.orderItemList ?? []).map((item) => (
                   <div className="order-item" key={item.orderItemId ?? item.productId}>
                     <Link className="order-item-image" to={`/products/${item.productId}`}>
-                      <ProductImage src={item.imageUrl} alt={item.productName || "訂單商品"} />
+                      <ProductImage
+                        src={getProductImageUrl(item)}
+                        alt={item.productName || "訂單商品"}
+                      />
                     </Link>
                     <div className="order-item-copy">
                       <h3>

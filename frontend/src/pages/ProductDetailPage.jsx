@@ -8,6 +8,7 @@ import { useCart } from "../hooks/useCart";
 import { getCategoryLabel } from "../utils/categories";
 import { getErrorMessage } from "../utils/errors";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 function ProductDetailPage() {
   const { productId } = useParams();
@@ -86,7 +87,7 @@ function ProductDetailPage() {
 
       <article className="product-detail">
         <div className="product-detail-image">
-          <ProductImage src={product.imageUrl} alt={product.productName} />
+          <ProductImage src={getProductImageUrl(product)} alt={product.productName} />
         </div>
         <div className="product-detail-copy">
           <p className="eyebrow">{getCategoryLabel(product.category)} · SHIWU SELECT</p>

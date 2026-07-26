@@ -9,6 +9,7 @@ import { useCart } from "../hooks/useCart";
 import { useUser } from "../hooks/useUser";
 import { getErrorMessage, getOrderErrorMessage } from "../utils/errors";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -130,7 +131,7 @@ function CartPage() {
             {items.map((item) => (
               <article className="cart-item" key={item.productId}>
                 <Link className="cart-item-image" to={`/products/${item.productId}`}>
-                  <ProductImage src={item.imageUrl} alt={item.productName} />
+                  <ProductImage src={getProductImageUrl(item)} alt={item.productName} />
                 </Link>
                 <div className="cart-item-copy">
                   <h2><Link to={`/products/${item.productId}`}>{item.productName}</Link></h2>
