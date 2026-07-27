@@ -31,16 +31,6 @@
 | 資料庫 | MySQL；後端測試使用 H2 in-memory database |
 | 驗證 | Spring Security Session、BCrypt、CSRF |
 
-```text
-瀏覽器（http://localhost:5173）
-        │
-        │ /api/*，Vite proxy 會移除 /api
-        ▼
-Spring Boot（http://localhost:8080）
-        │
-        ▼
-MySQL（localhost:3306 / mall）
-```
 
 ## 專案結構
 
@@ -49,9 +39,95 @@ E-Commerce/
 ├── frontend/          # React 商城前台與商品管理 Demo
 ├── springboot-mall/   # Spring Boot API
 ├── docs/              # 設計規格、開發進度與圖片授權清冊
-├── .agents/           # 專案開發 guardrails
+├── .agents/         
 └── README.md
 ```
+
+## 後端資料夾結構
+
+後端位於 `springboot-mall/`，採用 Controller → Service → DAO 分層。
+
+```text
+springboot-mall/
+├── pom.xml
+└── src/
+    ├── main/
+    │   ├── java/com/jerry/springbootmall/
+    │   │   ├── SpringbootMallApplication.java  # 應用程式進入點
+    │   │   ├── config/                         # Spring Security 設定
+    │   │   ├── security/                       # UserDetails 與登入會員 Principal
+    │   │   ├── controller/                     # HTTP API 與回應狀態
+    │   │   ├── service/                        # 商業邏輯介面
+    │   │   │   └── impl/                       # 商業邏輯實作
+    │   │   ├── dao/                            # 資料存取介面
+    │   │   │   └── impl/                       # JDBC SQL 實作
+    │   │   ├── dto/                            # API 輸入與查詢條件
+    │   │   ├── model/                          # 商品、會員、訂單資料模型
+    │   │   ├── rowmapper/                      # SQL ResultSet 轉換為 model
+    │   │   ├── constant/                       # 商品分類等固定值
+    │   │   └── util/                           # 分頁等共用物件
+    │   └── resources/
+    │       └── application.properties          # MySQL 與 Session 設定
+    └── test/
+        ├── java/com/jerry/springbootmall/       # Controller 與整合測試
+        └── resources/
+            ├── application.properties          # H2 測試設定
+            ├── schema.sql                      # 測試資料表定義
+            └── data.sql                        # 測試初始資料
+```
+
+
+## Database tables
+
+### `users`：會員
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `user_id` | `INT`, PK, AUTO_INCREMENT | 會員ID |
+| `email` | `VARCHAR(256)`, UNIQUE, NOT NULL | 登入 Email |
+| `password` | `VARCHAR(256)`, NOT NULL | BCrypt 密碼雜湊 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+`User.password` 使用 `@JsonIgnore`，後端將 `User` 序列化為 JSON 時不會回傳密碼。
+
+### `product`：商品
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `product_id` | `INT`, PK, AUTO_INCREMENT | 商品ID |
+| `product_name` | `VARCHAR(128)`, NOT NULL | 商品名稱 |
+| `category` | `VARCHAR(32)`, NOT NULL | 商品分類 enum 字串 |
+| `image_url` | `VARCHAR(256)`, NOT NULL | 商品圖片位址 |
+| `price` | `INT`, NOT NULL | 商品單價 |
+| `stock` | `INT`, NOT NULL | 現有庫存 |
+| `description` | `VARCHAR(1024)`, nullable | 商品描述 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+### `order`：訂單主表
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `order_id` | `INT`, PK, AUTO_INCREMENT | 訂單ID |
+| `user_id` | `INT`, NOT NULL | 下單會員ID |
+| `total_amount` | `INT`, NOT NULL | 訂單總金額 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+Java `Order` 中的 `orderItemList` 是 Service 查出訂單後，再查詢明細並組裝。
+
+### `order_item`：訂單明細
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `order_item_id` | `INT`, PK, AUTO_INCREMENT | 明細識別碼 |
+| `order_id` | `INT`, NOT NULL | 所屬訂單 |
+| `product_id` | `INT`, NOT NULL | 購買商品 |
+| `quantity` | `INT`, NOT NULL | 購買數量 |
+| `amount` | `INT`, NOT NULL | 該項商品小計 |
+
+`OrderItem` model 另外具有 `productName` 與 `imageUrl`。這兩個不是 `order_item` 欄位，而是 DAO 以 `order_item LEFT JOIN product` 查詢後提供給前端的顯示資料。
 
 詳細規格與進度：
 
@@ -60,7 +136,7 @@ E-Commerce/
 
 ## 環境需求
 
-- Node.js `22.22.0` 以上（React Router 8 的最低需求）
+- Node.js `22.22.0` 以上
 - npm
 - JDK 17
 - Maven
@@ -144,14 +220,6 @@ cd springboot-mall
 mvn test
 ```
 
-後端測試使用 H2 記憶體資料庫及 `src/test/resources` 下的 schema／測試資料，不會連線或寫入本機 MySQL `mall` 資料庫。
-
-目前已驗證：
-
-- 前端 13 個測試檔、49 個測試案例通過
-- 前端 lint 與正式建置通過
-- 後端 34 個測試通過
-- 正式環境 npm 相依性 0 項已知漏洞
 
 ## Session、CSRF 與權限界線
 
