@@ -26,7 +26,7 @@ function HomePage() {
 
       try {
         const data = await getProducts(
-          { orderBy: "created_date", sort: "desc", limit: 8, offset: 0 },
+          { orderBy: "created_date", sort: "desc", limit: 9, offset: 0 },
           controller.signal,
         );
         setPage(data);
@@ -42,7 +42,7 @@ function HomePage() {
 
   const products = page?.results ?? [];
   const featuredProduct = products[0];
-  const latestProducts = featuredProduct ? products.slice(1, 7) : [];
+  const latestProducts = featuredProduct ? products.slice(1, 9) : [];
 
   return (
     <>
