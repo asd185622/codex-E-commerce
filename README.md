@@ -1,8 +1,7 @@
 # 拾物 SHIWU E-Commerce
 
-以 Spring Boot REST API 為核心、React 為操作介面的電商作品集。專案涵蓋商品瀏覽、會員 Session、購物車、訂單與商品管理 Demo，並刻意維持容易閱讀的前後端結構。
+以 Spring Boot REST API 為核心、React 為操作介面的電商作品集。專案涵蓋商品瀏覽、會員 Session、購物車、訂單與商品管理 Demo。
 
-> 商品管理功能是 API 操作展示，不是正式後台。本專案依目前決策不實作 RBAC，因此商品新增、修改與刪除端點沒有管理員角色保護。
 
 ## 功能
 
@@ -22,7 +21,6 @@
 - 新增、修改與刪除商品
 - 表單驗證、JPG／PNG／WebP 圖片上傳、即時預覽與操作狀態回饋
 - CSRF 保護的寫入請求
-- 介面持續揭露「未實作 RBAC」限制
 
 ## 技術架構
 
@@ -33,16 +31,6 @@
 | 資料庫 | MySQL；後端測試使用 H2 in-memory database |
 | 驗證 | Spring Security Session、BCrypt、CSRF |
 
-```text
-瀏覽器（http://localhost:5173）
-        │
-        │ /api/*，Vite proxy 會移除 /api
-        ▼
-Spring Boot（http://localhost:8080）
-        │
-        ▼
-MySQL（localhost:3306 / mall）
-```
 
 ## 專案結構
 
@@ -51,15 +39,100 @@ E-Commerce/
 ├── frontend/          # React 商城前台與商品管理 Demo
 ├── springboot-mall/   # Spring Boot API
 ├── docs/              # 設計規格、開發進度與圖片授權清冊
-├── .agents/           # 專案開發 guardrails
+├── .agents/         
 └── README.md
 ```
+
+## 後端資料夾結構
+
+後端位於 `springboot-mall/`，採用 Controller → Service → DAO 分層。
+
+```text
+springboot-mall/
+├── pom.xml
+└── src/
+    ├── main/
+    │   ├── java/com/jerry/springbootmall/
+    │   │   ├── SpringbootMallApplication.java  # 應用程式進入點
+    │   │   ├── config/                         # Spring Security 設定
+    │   │   ├── security/                       # UserDetails 與登入會員 Principal
+    │   │   ├── controller/                     # HTTP API 與回應狀態
+    │   │   ├── service/                        # 商業邏輯介面
+    │   │   │   └── impl/                       # 商業邏輯實作
+    │   │   ├── dao/                            # 資料存取介面
+    │   │   │   └── impl/                       # JDBC SQL 實作
+    │   │   ├── dto/                            # API 輸入與查詢條件
+    │   │   ├── model/                          # 商品、會員、訂單資料模型
+    │   │   ├── rowmapper/                      # SQL ResultSet 轉換為 model
+    │   │   ├── constant/                       # 商品分類等固定值
+    │   │   └── util/                           # 分頁等共用物件
+    │   └── resources/
+    │       └── application.properties          # MySQL 與 Session 設定
+    └── test/
+        ├── java/com/jerry/springbootmall/       # Controller 與整合測試
+        └── resources/
+            ├── application.properties          # H2 測試設定
+            ├── schema.sql                      # 測試資料表定義
+            └── data.sql                        # 測試初始資料
+```
+
+
+## Database tables
+
+### `users`：會員
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `user_id` | `INT`, PK, AUTO_INCREMENT | 會員ID |
+| `email` | `VARCHAR(256)`, UNIQUE, NOT NULL | 登入 Email |
+| `password` | `VARCHAR(256)`, NOT NULL | BCrypt 密碼雜湊 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+`User.password` 使用 `@JsonIgnore`，後端將 `User` 序列化為 JSON 時不會回傳密碼。
+
+### `product`：商品
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `product_id` | `INT`, PK, AUTO_INCREMENT | 商品ID |
+| `product_name` | `VARCHAR(128)`, NOT NULL | 商品名稱 |
+| `category` | `VARCHAR(32)`, NOT NULL | 商品分類 enum 字串 |
+| `image_url` | `VARCHAR(256)`, NOT NULL | 商品圖片位址 |
+| `price` | `INT`, NOT NULL | 商品單價 |
+| `stock` | `INT`, NOT NULL | 現有庫存 |
+| `description` | `VARCHAR(1024)`, nullable | 商品描述 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+### `order`：訂單主表
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `order_id` | `INT`, PK, AUTO_INCREMENT | 訂單ID |
+| `user_id` | `INT`, NOT NULL | 下單會員ID |
+| `total_amount` | `INT`, NOT NULL | 訂單總金額 |
+| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
+| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
+
+Java `Order` 中的 `orderItemList` 是 Service 查出訂單後，再查詢明細並組裝。
+
+### `order_item`：訂單明細
+
+| 欄位 | 類型／限制 | 用途 |
+|---|---|---|
+| `order_item_id` | `INT`, PK, AUTO_INCREMENT | 明細識別碼 |
+| `order_id` | `INT`, NOT NULL | 所屬訂單 |
+| `product_id` | `INT`, NOT NULL | 購買商品 |
+| `quantity` | `INT`, NOT NULL | 購買數量 |
+| `amount` | `INT`, NOT NULL | 該項商品小計 |
+
+`OrderItem` model 另外具有 `productName` 與 `imageUrl`。這兩個不是 `order_item` 欄位，而是 DAO 以 `order_item LEFT JOIN product` 查詢後提供給前端的顯示資料。
 
 詳細規格與進度：
 
 - [前端設計與實作規格](docs/frontend-design-plan.md)
 - [目前開發狀態](docs/development-status.md)
-- [商品圖片授權清冊](docs/product-image-licenses.md)
 
 ## 後端資料夾結構
 
@@ -233,7 +306,7 @@ erDiagram
 
 ## 環境需求
 
-- Node.js `22.22.0` 以上（React Router 8 的最低需求）
+- Node.js `22.22.0` 以上
 - npm
 - JDK 17
 - Maven
@@ -269,7 +342,6 @@ CREATE DATABASE mall
 
 > `schema.sql` 開頭包含 `DROP TABLE IF EXISTS`，會刪除同名資料表與其中資料。只能用於全新資料庫或確定要重建的本機開發資料庫。`data.sql` 是自動化測試資料，不建議匯入一般開發資料庫。
 
-目前專案尚未導入 Flyway 或 Liquibase，正式環境應改用版本化 migration，不應直接使用測試 schema 重建資料。
 
 ### 3. 設定並啟動後端
 
@@ -320,14 +392,6 @@ cd springboot-mall
 mvn test
 ```
 
-後端測試使用 H2 記憶體資料庫及 `src/test/resources` 下的 schema／測試資料，不會連線或寫入本機 MySQL `mall` 資料庫。
-
-目前已驗證：
-
-- 前端 15 個測試檔、60 個測試案例通過
-- 前端 lint 與正式建置通過
-- 後端 41 個測試通過
-- 正式環境 npm 相依性 0 項已知漏洞
 
 ## Session、CSRF 與權限界線
 
@@ -337,7 +401,6 @@ mvn test
 - 前端啟動時透過 `GET /users/me` 還原會員資料。
 - 非 GET 請求會先由 `GET /csrf` 取得 CSRF token，再使用後端指定的 header 送出。
 - 訂單端點會比對 URL 中的 `userId` 與目前 Session 會員，避免跨會員讀寫訂單。
-- 本專案不實作 RBAC。商品管理路由及寫入 API 只能作為 Demo，不能視為正式管理員授權。
 
 ## API 摘要
 
@@ -375,15 +438,4 @@ mvn test
 | `/admin/products/new` | 新增商品 Demo |
 | `/admin/products/:productId/edit` | 修改商品 Demo |
 
-## 已知限制
 
-- 不提供 RBAC 或管理員角色；管理功能僅供作品展示。
-- 不包含真實金流、配送地址、優惠券、收藏、評論或第三方登入。
-- 後端既有商品仍保存舊外部 `imageUrl`；前端會將已盤點的 8 個網址替換成專案內原創素材，尚未進行資料庫遷移。
-- 上傳圖片保存在後端本機檔案系統；正式部署需為 `PRODUCT_IMAGE_STORAGE_DIR` 掛載持久磁碟，目前未整合雲端物件儲存。
-- 目前沒有 Docker、CI/CD 或正式資料庫 migration。
-- 開發工具維持目前可正常測試與建置的版本，不規劃只為清除 dev-only audit 警告而進行主要版本升級。
-
-## 專案定位
-
-這是一個以後端 API、安全流程與資料操作為重點的求職作品集。React 前端用來完整呈現 API 能力，但不刻意加入大型狀態管理或 UI 框架，以保留清楚、容易說明的程式結構。
