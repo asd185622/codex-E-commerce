@@ -53,7 +53,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 | 路由 | 狀態 | 已完成內容 |
 |---|---|---|
-| `/` | 已完成 | 主打商品、最新商品、載入／空資料／錯誤狀態 |
+| `/` | 已完成 | 主打商品、最新上架 8 筆商品、載入／空資料／錯誤狀態 |
 | `/products` | 已完成 | 搜尋、分類篩選、排序、分頁與 URL 查詢參數同步 |
 | `/products/:productId` | 已完成 | 商品詳情、庫存與數量限制、加入購物車、找不到商品狀態 |
 | `/cart` | 已完成 | 顯示商品、調整數量、移除商品、localStorage、金額摘要、最新商品／庫存檢查與建立訂單 |
@@ -131,12 +131,12 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 |---|---|
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
-| `npm test` | 通過，15 個測試檔、60 個測試案例 |
+| `npm test` | 通過，16 個測試檔、61 個測試案例 |
 | `npm audit --omit=dev` | 通過，正式環境相依性 0 項漏洞 |
 | `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
 | `mvn test` | 通過，共 41 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
-| 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原、建立訂單、訂單重新載入與 skip link 目標焦點通過；2026-07-27 另驗證商品達購買上限時提示可見、加入按鈕停用且數量欄位隱藏，console 無 error／warning |
+| 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原、建立訂單、訂單重新載入與 skip link 目標焦點通過；2026-07-27 另驗證商品達購買上限時提示可見、加入按鈕停用且數量欄位隱藏；首頁「最新上架」顯示 8 筆、不重複主打商品且無水平溢位，console 無 error／warning |
 
 ### 2.9 前端自動化測試基礎
 
@@ -154,6 +154,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 測試訂單列表 API 錯誤重試及 401 Session 過期時清除會員狀態。
 - [x] 測試商城／管理 Demo 的 skip link 目標可聚焦，以及 404 頁具有頁面主標題與返回入口。
 - [x] 測試圖片格式、大小、multipart 與 CSRF，上傳路徑轉換、選檔預覽及新增／編輯商品串接。
+- [x] 測試首頁保留第一筆最新商品作為主打，並在「最新上架」顯示其餘 8 筆且不重複。
 
 ## 3. 收尾狀態
 
