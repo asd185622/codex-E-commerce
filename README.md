@@ -1,8 +1,7 @@
 # 拾物 SHIWU E-Commerce
 
-以 Spring Boot REST API 為核心、React 為操作介面的電商作品集。專案涵蓋商品瀏覽、會員 Session、購物車、訂單與商品管理 Demo，並刻意維持容易閱讀的前後端結構。
+以 Spring Boot REST API 為核心、React 為操作介面的電商作品集。專案涵蓋商品瀏覽、會員 Session、購物車、訂單與商品管理 Demo。
 
-> 商品管理功能是 API 操作展示，不是正式後台。本專案依目前決策不實作 RBAC，因此商品新增、修改與刪除端點沒有管理員角色保護。
 
 ## 功能
 
@@ -22,7 +21,6 @@
 - 新增、修改與刪除商品
 - 表單驗證、圖片預覽與操作狀態回饋
 - CSRF 保護的寫入請求
-- 介面持續揭露「未實作 RBAC」限制
 
 ## 技術架構
 
@@ -59,7 +57,6 @@ E-Commerce/
 
 - [前端設計與實作規格](docs/frontend-design-plan.md)
 - [目前開發狀態](docs/development-status.md)
-- [商品圖片授權清冊](docs/product-image-licenses.md)
 
 ## 環境需求
 
@@ -99,7 +96,6 @@ CREATE DATABASE mall
 
 > `schema.sql` 開頭包含 `DROP TABLE IF EXISTS`，會刪除同名資料表與其中資料。只能用於全新資料庫或確定要重建的本機開發資料庫。`data.sql` 是自動化測試資料，不建議匯入一般開發資料庫。
 
-目前專案尚未導入 Flyway 或 Liquibase，正式環境應改用版本化 migration，不應直接使用測試 schema 重建資料。
 
 ### 3. 設定並啟動後端
 
@@ -165,7 +161,6 @@ mvn test
 - 前端啟動時透過 `GET /users/me` 還原會員資料。
 - 非 GET 請求會先由 `GET /csrf` 取得 CSRF token，再使用後端指定的 header 送出。
 - 訂單端點會比對 URL 中的 `userId` 與目前 Session 會員，避免跨會員讀寫訂單。
-- 本專案不實作 RBAC。商品管理路由及寫入 API 只能作為 Demo，不能視為正式管理員授權。
 
 ## API 摘要
 
@@ -203,13 +198,7 @@ mvn test
 
 ## 已知限制
 
-- 不提供 RBAC 或管理員角色；管理功能僅供作品展示。
-- 不包含真實金流、配送地址、優惠券、收藏、評論或第三方登入。
-- 後端既有商品仍保存舊外部 `imageUrl`；前端會將已盤點的 8 個網址替換成專案內原創素材，尚未進行資料庫遷移。
 - 目前沒有圖片上傳服務，商品表單使用 `imageUrl`。
 - 目前沒有 Docker、CI/CD 或正式資料庫 migration。
 - 開發工具維持目前可正常測試與建置的版本，不規劃只為清除 dev-only audit 警告而進行主要版本升級。
 
-## 專案定位
-
-這是一個以後端 API、安全流程與資料操作為重點的求職作品集。React 前端用來完整呈現 API 能力，但不刻意加入大型狀態管理或 UI 框架，以保留清楚、容易說明的程式結構。
