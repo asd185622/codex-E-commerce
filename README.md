@@ -2,6 +2,8 @@
 
 以 Spring Boot REST API 為核心、React 為操作介面的電商作品集。專案涵蓋商品瀏覽、會員 Session、購物車、訂單與商品管理 Demo。
 
+我實際做的部分是Spring boot後端和單元測試的部分，但不包括Spring security。
+Spring security和前端的頁面是透過codex來幫我實現的。
 
 ## 功能
 
