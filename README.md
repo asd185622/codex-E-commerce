@@ -75,6 +75,41 @@ springboot-mall/
             ├── schema.sql                      # 測試資料表定義
             └── data.sql                        # 測試初始資料
 ```
+## API 摘要
+
+後端端點沒有 `/api` 前綴；`/api` 只存在於前端開發代理。
+
+| 方法 | 路徑 | 用途 | 登入需求 |
+|---|---|---|---|
+| `GET` | `/products` | 商品列表、搜尋、分類、排序與分頁 | 否 |
+| `GET` | `/products/{productId}` | 商品詳情 | 否 |
+| `POST` | `/products` | 新增商品 Demo | 否；需 CSRF |
+| `PUT` | `/products/{productId}` | 修改商品 Demo | 否；需 CSRF |
+| `DELETE` | `/products/{productId}` | 刪除商品 Demo | 否；需 CSRF |
+| `POST` | `/product-images` | 上傳商品圖片（JPG／PNG／WebP，最多 5 MB） | 否；需 CSRF |
+| `GET` | `/product-images/{fileName}` | 讀取已上傳商品圖片 | 否 |
+| `POST` | `/users/register` | 註冊 | 否；需 CSRF |
+| `POST` | `/users/login` | 登入 | 否；需 CSRF |
+| `POST` | `/users/logout` | 登出 | 是；需 CSRF |
+| `GET` | `/users/me` | 目前會員 | 是 |
+| `GET` | `/csrf` | 取得 CSRF token | 否 |
+| `POST` | `/users/{userId}/orders` | 建立自己的訂單 | 是；需 CSRF |
+| `GET` | `/users/{userId}/orders` | 查詢自己的訂單 | 是 |
+
+## 前端頁面
+
+| 路徑 | 頁面 |
+|---|---|
+| `/` | 商城首頁 |
+| `/products` | 商品列表 |
+| `/products/:productId` | 商品詳情 |
+| `/cart` | 購物袋與結帳 |
+| `/login` | 登入 |
+| `/register` | 註冊 |
+| `/orders` | 我的訂單 |
+| `/admin/products` | 商品管理 Demo |
+| `/admin/products/new` | 新增商品 Demo |
+| `/admin/products/:productId/edit` | 修改商品 Demo |
 
 
 ## Database tables
@@ -115,7 +150,7 @@ springboot-mall/
 | `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
 | `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
 
-Java `Order` 中的 `orderItemList` 是 Service 查出訂單後，再查詢明細並組裝。
+ `Order` 中的 `orderItemList` 是 Service 查出訂單後，再查詢明細並組裝。
 
 ### `order_item`：訂單明細
 
@@ -126,183 +161,11 @@ Java `Order` 中的 `orderItemList` 是 Service 查出訂單後，再查詢明�
 | `product_id` | `INT`, NOT NULL | 購買商品 |
 | `quantity` | `INT`, NOT NULL | 購買數量 |
 | `amount` | `INT`, NOT NULL | 該項商品小計 |
-
-`OrderItem` model 另外具有 `productName` 與 `imageUrl`。這兩個不是 `order_item` 欄位，而是 DAO 以 `order_item LEFT JOIN product` 查詢後提供給前端的顯示資料。
 
 詳細規格與進度：
 
 - [前端設計與實作規格](docs/frontend-design-plan.md)
 - [目前開發狀態](docs/development-status.md)
-
-## 後端資料夾結構
-
-後端位於 `springboot-mall/`，採用 Controller → Service → DAO 分層。資料存取使用 Spring JDBC 與手寫 SQL，不是 JPA／Hibernate，因此 `model` 類別是承載查詢結果的 Java Bean，資料表關聯也不是透過 `@OneToMany` 等 annotation 建立。
-
-```text
-springboot-mall/
-├── pom.xml
-└── src/
-    ├── main/
-    │   ├── java/com/jerry/springbootmall/
-    │   │   ├── SpringbootMallApplication.java  # 應用程式進入點
-    │   │   ├── config/                         # Spring Security 設定
-    │   │   ├── security/                       # UserDetails 與登入會員 Principal
-    │   │   ├── controller/                     # HTTP API 與回應狀態
-    │   │   ├── service/                        # 商業邏輯介面
-    │   │   │   └── impl/                       # 商業邏輯實作
-    │   │   ├── dao/                            # 資料存取介面
-    │   │   │   └── impl/                       # JDBC SQL 實作
-    │   │   ├── dto/                            # API 輸入與查詢條件
-    │   │   ├── model/                          # 商品、會員、訂單資料模型
-    │   │   ├── rowmapper/                      # SQL ResultSet 轉換為 model
-    │   │   ├── constant/                       # 商品分類等固定值
-    │   │   └── util/                           # 分頁等共用物件
-    │   └── resources/
-    │       └── application.properties          # MySQL 與 Session 設定
-    └── test/
-        ├── java/com/jerry/springbootmall/       # Controller 與整合測試
-        └── resources/
-            ├── application.properties          # H2 測試設定
-            ├── schema.sql                      # 測試資料表定義
-            └── data.sql                        # 測試初始資料
-```
-
-一般請求會依照以下方向流動：
-
-```text
-HTTP Request → Controller → Service → DAO
-                                  ↓
-                     NamedParameterJdbcTemplate
-                                  ↓
-                            MySQL／H2
-```
-
-- `controller/` 接收 HTTP request、驗證輸入並決定 HTTP status。
-- `service/impl/` 處理商業規則，例如確認會員、檢查庫存、計算訂單金額。
-- `dao/impl/` 使用 `NamedParameterJdbcTemplate` 執行查詢與寫入。
-- `rowmapper/` 將每一列 SQL 結果轉換成 `Product`、`User`、`Order` 或 `OrderItem`。
-- `dto/` 是 API 請求或查詢條件，不等同資料庫 table。
-- `model/` 對應主要資料，但可能包含 JOIN 後才取得、並非實際 table 欄位的顯示資料。
-
-## Database tables 與關聯
-
-正式環境使用 MySQL 的 `mall` database，測試則使用 H2 in-memory database。版本庫目前可確認的 table 定義位於 `springboot-mall/src/test/resources/schema.sql`。
-
-### `users`：會員
-
-| 欄位 | 類型／限制 | 用途 |
-|---|---|---|
-| `user_id` | `INT`, PK, AUTO_INCREMENT | 會員識別碼 |
-| `email` | `VARCHAR(256)`, UNIQUE, NOT NULL | 登入 Email |
-| `password` | `VARCHAR(256)`, NOT NULL | BCrypt 密碼雜湊 |
-| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
-| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
-
-`User.password` 使用 `@JsonIgnore`，後端將 `User` 序列化為 JSON 時不會回傳密碼。
-
-### `product`：商品
-
-| 欄位 | 類型／限制 | 用途 |
-|---|---|---|
-| `product_id` | `INT`, PK, AUTO_INCREMENT | 商品識別碼 |
-| `product_name` | `VARCHAR(128)`, NOT NULL | 商品名稱 |
-| `category` | `VARCHAR(32)`, NOT NULL | 商品分類 enum 字串 |
-| `image_url` | `VARCHAR(256)`, NOT NULL | 商品圖片網址 |
-| `price` | `INT`, NOT NULL | 商品單價 |
-| `stock` | `INT`, NOT NULL | 現有庫存 |
-| `description` | `VARCHAR(1024)`, nullable | 商品描述 |
-| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
-| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
-
-### `order`：訂單主表
-
-| 欄位 | 類型／限制 | 用途 |
-|---|---|---|
-| `order_id` | `INT`, PK, AUTO_INCREMENT | 訂單識別碼 |
-| `user_id` | `INT`, NOT NULL | 下單會員 |
-| `total_amount` | `INT`, NOT NULL | 訂單總金額 |
-| `created_date` | `TIMESTAMP`, NOT NULL | 建立時間 |
-| `last_modified_date` | `TIMESTAMP`, NOT NULL | 最後修改時間 |
-
-因為 `order` 是 SQL 關鍵字，DAO 的 SQL 會以反引號寫成 `` `order` ``。Java `Order` 中的 `orderItemList` 不是 ORM 關聯，而是 Service 查出訂單後，再查詢明細並組裝。
-
-### `order_item`：訂單明細
-
-| 欄位 | 類型／限制 | 用途 |
-|---|---|---|
-| `order_item_id` | `INT`, PK, AUTO_INCREMENT | 明細識別碼 |
-| `order_id` | `INT`, NOT NULL | 所屬訂單 |
-| `product_id` | `INT`, NOT NULL | 購買商品 |
-| `quantity` | `INT`, NOT NULL | 購買數量 |
-| `amount` | `INT`, NOT NULL | 該項商品小計 |
-
-`OrderItem` model 另外具有 `productName` 與 `imageUrl`。這兩個不是 `order_item` 欄位，而是 DAO 以 `order_item LEFT JOIN product` 查詢後提供給前端的顯示資料。
-
-### Table 關聯圖
-
-```mermaid
-erDiagram
-    USERS ||--o{ ORDER : "user_id"
-    ORDER ||--|{ ORDER_ITEM : "order_id"
-    PRODUCT ||--o{ ORDER_ITEM : "product_id"
-
-    USERS {
-        int user_id PK
-        varchar email UK
-        varchar password
-        timestamp created_date
-        timestamp last_modified_date
-    }
-
-    PRODUCT {
-        int product_id PK
-        varchar product_name
-        varchar category
-        varchar image_url
-        int price
-        int stock
-        varchar description
-        timestamp created_date
-        timestamp last_modified_date
-    }
-
-    ORDER {
-        int order_id PK
-        int user_id
-        int total_amount
-        timestamp created_date
-        timestamp last_modified_date
-    }
-
-    ORDER_ITEM {
-        int order_item_id PK
-        int order_id
-        int product_id
-        int quantity
-        int amount
-    }
-```
-
-關聯可解讀為：
-
-- 一位 `users` 會員可以擁有多筆 `order`。
-- 一筆 `order` 包含一到多筆 `order_item`。
-- 一項 `product` 可以出現在多筆 `order_item`。
-- `order` 與 `product` 透過 `order_item` 形成多對多關係。
-
-目前 `schema.sql` 只有保存關聯 ID，沒有宣告實體 `FOREIGN KEY` constraint；關聯完整性主要由後端 Service 維護。正式環境若要加上 foreign key 或導入 Flyway／Liquibase，應另外規劃 migration，不能直接對既有資料庫套用測試 schema。
-
-### 建立訂單的資料流程
-
-`OrderServiceImpl.createOrder()` 使用 `@Transactional`，將以下操作放在同一個 transaction：
-
-1. 確認 `users` 中的會員存在。
-2. 逐項查詢 `product`，確認商品存在且庫存足夠。
-3. 扣除商品 `stock`，並以當下單價計算每筆 `order_item.amount`。
-4. 加總金額並新增 `order`。
-5. 使用新產生的 `order_id` 批次新增 `order_item`。
-
-流程中若拋出例外，transaction 會回滾，避免只扣庫存卻沒有建立完整訂單。
 
 ## 環境需求
 
@@ -345,9 +208,9 @@ CREATE DATABASE mall
 
 ### 3. 設定並啟動後端
 
-確認 [application.properties](springboot-mall/src/main/resources/application.properties) 的 MySQL 位址、帳號與密碼符合本機環境。不要將真實或正式環境密碼提交到 Git。
+確認 [application.properties](springboot-mall/src/main/resources/application.properties) 的 MySQL 位址、帳號與密碼符合本機環境。
 
-商品圖片預設保存於 `springboot-mall/uploads/products/`。可用 `PRODUCT_IMAGE_STORAGE_DIR` 指定其他目錄；正式部署應指向持久磁碟，避免重新部署時遺失上傳圖片。
+商品圖片預設保存於 `springboot-mall/uploads/products/`。可用 `PRODUCT_IMAGE_STORAGE_DIR` 指定其他目錄。
 
 ```powershell
 cd springboot-mall
@@ -401,41 +264,4 @@ mvn test
 - 前端啟動時透過 `GET /users/me` 還原會員資料。
 - 非 GET 請求會先由 `GET /csrf` 取得 CSRF token，再使用後端指定的 header 送出。
 - 訂單端點會比對 URL 中的 `userId` 與目前 Session 會員，避免跨會員讀寫訂單。
-
-## API 摘要
-
-後端端點沒有 `/api` 前綴；`/api` 只存在於前端開發代理。
-
-| 方法 | 路徑 | 用途 | 登入需求 |
-|---|---|---|---|
-| `GET` | `/products` | 商品列表、搜尋、分類、排序與分頁 | 否 |
-| `GET` | `/products/{productId}` | 商品詳情 | 否 |
-| `POST` | `/products` | 新增商品 Demo | 否；需 CSRF |
-| `PUT` | `/products/{productId}` | 修改商品 Demo | 否；需 CSRF |
-| `DELETE` | `/products/{productId}` | 刪除商品 Demo | 否；需 CSRF |
-| `POST` | `/product-images` | 上傳商品圖片（JPG／PNG／WebP，最多 5 MB） | 否；需 CSRF |
-| `GET` | `/product-images/{fileName}` | 讀取已上傳商品圖片 | 否 |
-| `POST` | `/users/register` | 註冊 | 否；需 CSRF |
-| `POST` | `/users/login` | 登入 | 否；需 CSRF |
-| `POST` | `/users/logout` | 登出 | 是；需 CSRF |
-| `GET` | `/users/me` | 目前會員 | 是 |
-| `GET` | `/csrf` | 取得 CSRF token | 否 |
-| `POST` | `/users/{userId}/orders` | 建立自己的訂單 | 是；需 CSRF |
-| `GET` | `/users/{userId}/orders` | 查詢自己的訂單 | 是 |
-
-## 前端頁面
-
-| 路徑 | 頁面 |
-|---|---|
-| `/` | 商城首頁 |
-| `/products` | 商品列表 |
-| `/products/:productId` | 商品詳情 |
-| `/cart` | 購物袋與結帳 |
-| `/login` | 登入 |
-| `/register` | 註冊 |
-| `/orders` | 我的訂單 |
-| `/admin/products` | 商品管理 Demo |
-| `/admin/products/new` | 新增商品 Demo |
-| `/admin/products/:productId/edit` | 修改商品 Demo |
-
 
