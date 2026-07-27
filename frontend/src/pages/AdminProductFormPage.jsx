@@ -1,10 +1,14 @@
 // 共用新增與編輯商品流程，依路由參數決定載入與送出的 API。
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { createProduct, getProduct, updateProduct } from "../api/products";
+import { createProduct, getProduct, updateProduct, uploadProductImage } from "../api/products";
 import ProductForm from "../components/ProductForm";
 import StatusPanel from "../components/StatusPanel";
-import { getErrorMessage, getProductWriteErrorMessage } from "../utils/errors";
+import {
+  getErrorMessage,
+  getProductImageUploadErrorMessage,
+  getProductWriteErrorMessage,
+} from "../utils/errors";
 import { validateProduct } from "../utils/validation";
 
 function createEmptyProduct() {
@@ -24,6 +28,7 @@ function AdminProductFormPage() {
   const isEditing = Boolean(productId);
   const [values, setValues] = useState(createEmptyProduct);
   const [errors, setErrors] = useState({});
+  const [imageFile, setImageFile] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isLoading, setIsLoading] = useState(isEditing);
@@ -41,6 +46,7 @@ function AdminProductFormPage() {
 
       try {
         const product = await getProduct(productId, controller.signal);
+        setImageFile(null);
         setValues({
           productName: product.productName ?? "",
           category: product.category ?? "",
@@ -67,26 +73,43 @@ function AdminProductFormPage() {
     setSubmitError("");
   }
 
+  function handleImageChange(file) {
+    setImageFile(file);
+    setErrors((current) => ({ ...current, imageFile: "" }));
+    setSubmitError("");
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
-    const nextErrors = validateProduct(values);
+    const nextErrors = validateProduct(values, imageFile);
     setErrors(nextErrors);
     setSubmitError("");
 
     if (Object.keys(nextErrors).length > 0) return;
 
-    const payload = {
-      productName: values.productName.trim(),
-      category: values.category,
-      imageUrl: values.imageUrl.trim(),
-      price: Number(values.price),
-      stock: Number(values.stock),
-      description: values.description.trim() || null,
-    };
-
     setIsSubmitting(true);
 
     try {
+      let imageUrl = values.imageUrl.trim();
+      if (imageFile) {
+        try {
+          const uploadedImage = await uploadProductImage(imageFile);
+          imageUrl = uploadedImage.imageUrl;
+        } catch (requestError) {
+          setSubmitError(getProductImageUploadErrorMessage(requestError));
+          return;
+        }
+      }
+
+      const payload = {
+        productName: values.productName.trim(),
+        category: values.category,
+        imageUrl,
+        price: Number(values.price),
+        stock: Number(values.stock),
+        description: values.description.trim() || null,
+      };
+
       const savedProduct = isEditing
         ? await updateProduct(productId, payload)
         : await createProduct(payload);
@@ -143,11 +166,13 @@ function AdminProductFormPage() {
 
       <ProductForm
         values={values}
+        imageFile={imageFile}
         errors={errors}
         submitError={submitError}
         isSubmitting={isSubmitting}
         submitLabel={isEditing ? "儲存變更" : "建立商品"}
         onChange={handleChange}
+        onImageChange={handleImageChange}
         onSubmit={handleSubmit}
       />
     </div>

@@ -1,4 +1,4 @@
-// 集中封裝商品查詢與管理 Demo 的新增、修改、刪除請求。
+// 集中封裝商品查詢、圖片上傳與管理 Demo 的寫入請求。
 import apiClient from "./client";
 import { getCsrfHeaders } from "./csrf";
 
@@ -9,6 +9,20 @@ export async function getProducts(params, signal) {
 
 export async function getProduct(productId, signal) {
   const response = await apiClient.get(`/products/${productId}`, { signal });
+  return response.data;
+}
+
+export async function uploadProductImage(file) {
+  const csrfHeaders = await getCsrfHeaders();
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await apiClient.post("/product-images", formData, {
+    headers: {
+      ...csrfHeaders,
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 }
 

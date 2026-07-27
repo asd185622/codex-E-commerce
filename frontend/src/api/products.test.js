@@ -1,7 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import apiClient from "./client";
 import { getCsrfHeaders } from "./csrf";
-import { createProduct, deleteProduct, getProduct, getProducts, updateProduct } from "./products";
+import {
+  createProduct,
+  deleteProduct,
+  getProduct,
+  getProducts,
+  updateProduct,
+  uploadProductImage,
+} from "./products";
 
 vi.mock("./client", () => ({
   default: {
@@ -52,6 +59,25 @@ describe("商品 API", () => {
 
     expect(getCsrfHeaders).toHaveBeenCalledOnce();
     expect(apiClient.post).toHaveBeenCalledWith("/products", product, { headers: csrfHeaders });
+  });
+
+  it("以上傳表單與 CSRF 標頭送出商品圖片", async () => {
+    const file = new File(["image"], "product.png", { type: "image/png" });
+    apiClient.post.mockResolvedValue({ data: { imageUrl: "/product-images/generated.png" } });
+
+    await expect(uploadProductImage(file)).resolves.toEqual({
+      imageUrl: "/product-images/generated.png",
+    });
+
+    const [, formData, config] = apiClient.post.mock.calls[0];
+    expect(formData).toBeInstanceOf(FormData);
+    expect(formData.get("file")).toBe(file);
+    expect(config).toEqual({
+      headers: {
+        ...csrfHeaders,
+        "Content-Type": "multipart/form-data",
+      },
+    });
   });
 
   it("更新商品前取得 CSRF 標頭", async () => {

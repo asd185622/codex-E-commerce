@@ -51,7 +51,7 @@ function HomePage() {
           <p className="eyebrow">本週選物 · WEEKLY EDIT</p>
           <h1>讓日常，<br />多一件值得留下的東西。</h1>
           <p className="home-lead">
-            從餐桌、移動到閱讀，拾物用三條清楚的線索，幫你快速找到生活所需。
+            從食物、交通到書籍，拾物用三條清楚的線索，幫你快速找到生活所需。
           </p>
           <Link className="text-link" to="/products">
             查看全部選物

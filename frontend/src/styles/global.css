@@ -957,6 +957,10 @@ select {
   gap: 12px;
 }
 
+.purchase-panel-limit {
+  grid-template-columns: 1fr;
+}
+
 .quantity-field {
   display: flex;
   flex-direction: column;
@@ -977,6 +981,10 @@ select {
   color: var(--color-success);
   font-size: 0.84rem;
   font-weight: 700;
+}
+
+.cart-feedback-limit {
+  color: var(--color-coral);
 }
 
 .product-facts {
@@ -1398,6 +1406,13 @@ select {
   font-weight: 800;
 }
 
+.field-hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
 .form-field input {
   width: 100%;
 }
@@ -1545,31 +1560,6 @@ input.input-error,
   color: #fff;
 }
 
-.admin-security-note {
-  border-top: 1px solid rgba(255, 255, 255, 0.13);
-  background: #fff0eb;
-  color: #7d2d1d;
-}
-
-.admin-security-note > div {
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-.admin-security-note strong {
-  flex: 0 0 auto;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--color-coral);
-  color: #fff;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-}
-
 .admin-page {
   padding-block: 54px 100px;
 }
@@ -1594,30 +1584,6 @@ input.input-error,
   margin-bottom: 0;
   color: var(--color-muted);
   line-height: 1.7;
-}
-
-.admin-demo-card {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 24px;
-  margin-bottom: 28px;
-  padding: 18px 22px;
-  border: 1px solid #efb9a9;
-  border-left: 5px solid var(--color-coral);
-  border-radius: var(--radius-sm);
-  background: #fff7f4;
-}
-
-.admin-demo-card strong {
-  color: #7d2d1d;
-  font-size: 0.86rem;
-}
-
-.admin-demo-card p {
-  margin: 0;
-  color: #734538;
-  font-size: 0.82rem;
-  line-height: 1.65;
 }
 
 .admin-notice {
@@ -1837,6 +1803,25 @@ input.input-error,
 .admin-form-fields .form-field select,
 .admin-form-fields .form-field textarea {
   width: 100%;
+}
+
+.admin-form-fields input[type="file"] {
+  padding: 8px;
+  background: #fff;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.admin-form-fields input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #e9eefc;
+  color: var(--color-blue);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .admin-field-wide {
@@ -2149,11 +2134,6 @@ textarea.input-error {
     gap: 24px;
   }
 
-  .admin-security-note > div {
-    align-items: flex-start;
-    padding-block: 10px;
-  }
-
   .admin-page {
     padding-block: 42px 76px;
   }
@@ -2161,11 +2141,6 @@ textarea.input-error {
   .admin-page-heading {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .admin-demo-card {
-    grid-template-columns: 1fr;
-    gap: 8px;
   }
 
   .admin-toolbar {
@@ -2262,11 +2237,6 @@ textarea.input-error {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
-  }
-
-  .admin-security-note > div {
-    flex-direction: column;
-    gap: 7px;
   }
 
   .admin-toolbar {

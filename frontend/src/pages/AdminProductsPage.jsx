@@ -137,11 +137,6 @@ function AdminProductsPage() {
         <Link className="button button-primary" to="/admin/products/new">新增商品</Link>
       </header>
 
-      <section className="admin-demo-card" aria-label="管理 Demo 說明">
-        <strong>這是無 RBAC 的作品集 Demo</strong>
-        <p>任何能開啟此頁面的人都可能操作商品資料；請勿把此介面視為正式後台或真正的權限保護。</p>
-      </section>
-
       {notice ? <p className="form-success admin-notice" role="status">{notice}</p> : null}
       {deleteError ? <p className="form-error admin-notice" role="alert">{deleteError}</p> : null}
 

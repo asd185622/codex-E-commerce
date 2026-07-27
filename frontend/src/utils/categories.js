@@ -2,15 +2,15 @@
 export const categories = [
   {
     value: "FOOD",
-    label: "食味",
+    label: "食物",
   },
   {
     value: "CAR",
-    label: "行旅",
+    label: "交通",
   },
   {
     value: "E_BOOK",
-    label: "閱讀",
+    label: "書籍",
   },
 ];
 

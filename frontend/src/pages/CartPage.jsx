@@ -123,7 +123,7 @@ function CartPage() {
       {items.length === 0 ? (
         <StatusPanel
           title="購物袋還是空的"
-          message="從食味、行旅或閱讀開始，挑一件適合今天的選物。"
+          message="從食物、交通或書籍開始，挑一件適合今天的選物。"
         />
       ) : (
         <div className="cart-layout">

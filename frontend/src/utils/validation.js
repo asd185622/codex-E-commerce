@@ -1,6 +1,8 @@
 // 提供登入與註冊表單共用的 Email、密碼基本驗證。
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NON_NEGATIVE_INTEGER_PATTERN = /^\d+$/;
+const PRODUCT_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_PRODUCT_IMAGE_SIZE = 5 * 1024 * 1024;
 
 export function validateCredentials(email, password) {
   const errors = {};
@@ -19,7 +21,7 @@ export function validateCredentials(email, password) {
   return errors;
 }
 
-export function validateProduct(product) {
+export function validateProduct(product, imageFile = null) {
   const errors = {};
 
   if (!product.productName.trim()) {
@@ -30,8 +32,12 @@ export function validateProduct(product) {
     errors.category = "請選擇商品分類。";
   }
 
-  if (!product.imageUrl.trim()) {
-    errors.imageUrl = "請輸入商品圖片網址。";
+  if (!product.imageUrl.trim() && !imageFile) {
+    errors.imageFile = "請選擇商品圖片。";
+  } else if (imageFile && !PRODUCT_IMAGE_TYPES.has(imageFile.type)) {
+    errors.imageFile = "僅支援 JPG、PNG 或 WebP 圖片。";
+  } else if (imageFile && imageFile.size > MAX_PRODUCT_IMAGE_SIZE) {
+    errors.imageFile = "圖片大小不可超過 5 MB。";
   }
 
   const price = String(product.price).trim();

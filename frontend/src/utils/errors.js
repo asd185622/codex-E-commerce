@@ -81,3 +81,15 @@ export function getProductWriteErrorMessage(error, action) {
 
   return getErrorMessage(error, fallback);
 }
+
+export function getProductImageUploadErrorMessage(error) {
+  if (error.response?.status === 403) {
+    return "安全驗證已過期，請重新整理頁面後再試一次。";
+  }
+
+  if (error.response?.status === 400 || error.response?.status === 413) {
+    return error.response?.data?.message || "圖片格式或大小不符合上傳限制。";
+  }
+
+  return getErrorMessage(error, "目前無法上傳商品圖片，請稍後再試。");
+}

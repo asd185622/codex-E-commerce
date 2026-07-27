@@ -20,6 +20,7 @@ const localImageBySourceUrl = {
 
 function getProductImageUrl(product) {
   const sourceUrl = product?.imageUrl ?? "";
+  if (sourceUrl.startsWith("/product-images/")) return `/api${sourceUrl}`;
   return localImageBySourceUrl[sourceUrl] ?? sourceUrl;
 }
 
