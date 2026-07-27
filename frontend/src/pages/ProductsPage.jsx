@@ -1,6 +1,6 @@
 // 商品列表頁以 URL 參數同步搜尋、分類、排序與分頁狀態。
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { getProducts } from "../api/products";
 import ProductCard from "../components/ProductCard";
 import ProductGridSkeleton from "../components/ProductGridSkeleton";

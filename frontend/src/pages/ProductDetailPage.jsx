@@ -1,6 +1,6 @@
 // 顯示單一商品資料，並處理購買數量與加入購物車操作。
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { getProduct } from "../api/products";
 import ProductImage from "../components/ProductImage";
 import StatusPanel from "../components/StatusPanel";
@@ -8,6 +8,7 @@ import { useCart } from "../hooks/useCart";
 import { getCategoryLabel } from "../utils/categories";
 import { getErrorMessage } from "../utils/errors";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 function ProductDetailPage() {
   const { productId } = useParams();
@@ -86,7 +87,7 @@ function ProductDetailPage() {
 
       <article className="product-detail">
         <div className="product-detail-image">
-          <ProductImage src={product.imageUrl} alt={product.productName} />
+          <ProductImage src={getProductImageUrl(product)} alt={product.productName} />
         </div>
         <div className="product-detail-copy">
           <p className="eyebrow">{getCategoryLabel(product.category)} · SHIWU SELECT</p>

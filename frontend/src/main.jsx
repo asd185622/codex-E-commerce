@@ -1,7 +1,7 @@
 // 建立 React 應用程式，並注入路由、會員狀態與購物車狀態。
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import App from "./App";
 import CartProvider from "./context/CartContext";
 import UserProvider from "./context/UserContext";

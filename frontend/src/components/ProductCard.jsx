@@ -1,7 +1,8 @@
 // 顯示商品列表中的單張商品卡片與庫存狀態。
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { getCategoryLabel } from "../utils/categories";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 import ProductImage from "./ProductImage";
 
 function ProductCard({ product }) {
@@ -10,7 +11,7 @@ function ProductCard({ product }) {
   return (
     <article className="product-card">
       <Link className="product-card-image" to={`/products/${product.productId}`}>
-        <ProductImage src={product.imageUrl} alt={product.productName} />
+        <ProductImage src={getProductImageUrl(product)} alt={product.productName} />
         {soldOut ? <span className="stock-badge">暫時售罄</span> : null}
       </Link>
       <div className="product-card-body">

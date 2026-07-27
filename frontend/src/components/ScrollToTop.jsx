@@ -1,6 +1,6 @@
 // 路由切換後將頁面捲動位置重設到頂端。
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 function ScrollToTop() {
   const { pathname } = useLocation();

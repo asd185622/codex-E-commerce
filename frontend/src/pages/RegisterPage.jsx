@@ -1,6 +1,6 @@
 // 提供會員註冊表單，成功後引導使用者回到登入頁。
 import { useRef, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router";
 import { registerUser } from "../api/users";
 import PasswordField from "../components/PasswordField";
 import { useUser } from "../hooks/useUser";

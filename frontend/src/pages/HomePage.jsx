@@ -1,6 +1,6 @@
 // 首頁載入最新商品，組合主打商品與最新上架區塊。
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { getProducts } from "../api/products";
 import { ArrowIcon } from "../components/icons";
 import ProductCard from "../components/ProductCard";
@@ -10,6 +10,7 @@ import StatusPanel from "../components/StatusPanel";
 import { getCategoryLabel } from "../utils/categories";
 import { getErrorMessage } from "../utils/errors";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 
 function HomePage() {
   const [page, setPage] = useState(null);
@@ -70,7 +71,10 @@ function HomePage() {
           ) : featuredProduct ? (
             <>
               <Link className="featured-image" to={`/products/${featuredProduct.productId}`}>
-                <ProductImage src={featuredProduct.imageUrl} alt={featuredProduct.productName} />
+                <ProductImage
+                  src={getProductImageUrl(featuredProduct)}
+                  alt={featuredProduct.productName}
+                />
               </Link>
               <div className="featured-caption">
                 <div>

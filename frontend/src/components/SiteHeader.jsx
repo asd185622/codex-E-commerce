@@ -1,6 +1,6 @@
 // 顯示品牌、商品搜尋、會員 session 狀態與購物袋摘要。
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router";
 import { useCart } from "../hooks/useCart";
 import { useUser } from "../hooks/useUser";
 import { BagIcon, SearchIcon, UserIcon } from "./icons";

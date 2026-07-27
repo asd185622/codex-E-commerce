@@ -1,5 +1,5 @@
 // 顯示全站共用頁尾與作品集相關入口。
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 function SiteFooter() {
   return (
@@ -14,7 +14,8 @@ function SiteFooter() {
         </div>
         <div className="footer-links">
           <Link to="/products">瀏覽商品</Link>
-          <span className="footer-demo">管理 Demo 將於下一階段開放</span>
+          <Link to="/admin/products">進入商品管理 Demo</Link>
+          <span className="footer-demo">管理 Demo 未實作 RBAC，不代表真正授權。</span>
         </div>
       </div>
     </footer>
