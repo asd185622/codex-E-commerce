@@ -12,7 +12,7 @@ import { getProductImageUrl } from "../utils/productImages";
 
 function ProductDetailPage() {
   const { productId } = useParams();
-  const { addItem } = useCart();
+  const { items, addItem } = useCart();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
@@ -38,12 +38,6 @@ function ProductDetailPage() {
     loadProduct();
     return () => controller.abort();
   }, [productId, requestKey]);
-
-  function handleAddToCart() {
-    // 將目前選擇的數量加入全站購物車 Context。
-    addItem(product, quantity);
-    setAddedMessage(`已將 ${quantity} 件「${product.productName}」加入購物袋。`);
-  }
 
   if (error) {
     return (
@@ -74,6 +68,19 @@ function ProductDetailPage() {
   }
 
   const soldOut = product.stock <= 0;
+  const cartQuantity = items.find((item) => item.productId === product.productId)?.quantity ?? 0;
+  const remainingQuantity = Math.max(product.stock - cartQuantity, 0);
+  const reachedPurchaseLimit = !soldOut && remainingQuantity === 0;
+  const quantityToAdd = Math.min(quantity, Math.max(remainingQuantity, 1));
+  const feedbackMessage = reachedPurchaseLimit
+    ? `購物袋已有 ${cartQuantity} 件，已達此商品的購買上限。`
+    : addedMessage;
+
+  function handleAddToCart() {
+    // 加入前先依購物袋既有數量限制本次可加購數量。
+    addItem(product, quantityToAdd);
+    setAddedMessage(`已將 ${quantityToAdd} 件「${product.productName}」加入購物袋。`);
+  }
 
   return (
     <div className="product-detail-page page-width">
@@ -103,29 +110,38 @@ function ProductDetailPage() {
           </div>
 
           {!soldOut ? (
-            <div className="purchase-panel">
-              <div className="quantity-field">
-                <label htmlFor="quantity">數量</label>
-                <input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  value={quantity}
-                  onChange={(event) => {
-                    const value = Number(event.target.value);
-                    setQuantity(Math.max(1, Math.min(value || 1, product.stock)));
-                    setAddedMessage("");
-                  }}
-                />
-              </div>
-              <button className="button button-primary add-to-cart" type="button" onClick={handleAddToCart}>
-                加入購物袋
+            <div className={`purchase-panel ${reachedPurchaseLimit ? "purchase-panel-limit" : ""}`}>
+              {!reachedPurchaseLimit ? (
+                <div className="quantity-field">
+                  <label htmlFor="quantity">數量</label>
+                  <input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    max={remainingQuantity}
+                    value={quantityToAdd}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      setQuantity(Math.max(1, Math.min(value || 1, remainingQuantity)));
+                      setAddedMessage("");
+                    }}
+                  />
+                </div>
+              ) : null}
+              <button
+                className="button button-primary add-to-cart"
+                type="button"
+                onClick={handleAddToCart}
+                disabled={reachedPurchaseLimit}
+              >
+                {reachedPurchaseLimit ? "已達購買上限" : "加入購物袋"}
               </button>
             </div>
           ) : null}
 
-          <p className="cart-feedback" aria-live="polite">{addedMessage}</p>
+          <p className={`cart-feedback ${reachedPurchaseLimit ? "cart-feedback-limit" : ""}`} aria-live="polite">
+            {feedbackMessage}
+          </p>
 
           <dl className="product-facts">
             <div>

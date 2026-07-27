@@ -957,6 +957,10 @@ select {
   gap: 12px;
 }
 
+.purchase-panel-limit {
+  grid-template-columns: 1fr;
+}
+
 .quantity-field {
   display: flex;
   flex-direction: column;
@@ -977,6 +981,10 @@ select {
   color: var(--color-success);
   font-size: 0.84rem;
   font-weight: 700;
+}
+
+.cart-feedback-limit {
+  color: var(--color-coral);
 }
 
 .product-facts {
