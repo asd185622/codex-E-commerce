@@ -144,6 +144,8 @@
 | `POST /products` | 新增商品 |
 | `PUT /products/{productId}` | 修改商品 |
 | `DELETE /products/{productId}` | 刪除商品 |
+| `POST /product-images` | 上傳商品圖片並取得 `imageUrl` |
+| `GET /product-images/{fileName}` | 顯示已上傳商品圖片 |
 
 `GET /products` 使用：
 
@@ -158,7 +160,7 @@
 
 - `productName`
 - `category`
-- `imageUrl`
+- 商品圖片檔案：JPG、PNG 或 WebP，最大 5 MB；上傳成功後由後端產生 `imageUrl`
 - `price`，不得小於 0
 - `stock`，不得小於 0
 - `description`，選填
@@ -261,6 +263,8 @@ frontend/src/
 - 優先保存可合法隨專案使用的本機副本，避免外部連結失效。
 - 不將搜尋結果縮圖網址直接當作正式商品圖片。
 - 為所有商品圖片提供有意義的替代文字。
+- 管理表單選檔後先預覽，儲存商品時再上傳；圖片只接受 JPG、PNG 與 WebP，檔案大小上限為 5 MB。
+- 上傳圖片保存於後端可設定的持久目錄，資料庫只保存後端回傳的相對路徑。
 
 ## 9. 已知限制與非本階段範圍
 
@@ -284,7 +288,6 @@ frontend/src/
 - 優惠券
 - 收藏與評論
 - 第三方登入
-- 圖片上傳服務；商品管理先使用 `imageUrl`
 - 後端架構重整
 
 ## 10. 響應式與可用性

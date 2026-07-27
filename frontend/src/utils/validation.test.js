@@ -38,9 +38,30 @@ describe("validateProduct", () => {
     })).toEqual({
       productName: "請輸入商品名稱。",
       category: "請選擇商品分類。",
-      imageUrl: "請輸入商品圖片網址。",
+      imageFile: "請選擇商品圖片。",
       price: "請輸入商品價格。",
       stock: "請輸入商品庫存。",
+    });
+  });
+
+  it("新增商品可用選取的圖片通過驗證", () => {
+    const imageFile = new File(["image"], "product.png", { type: "image/png" });
+    expect(validateProduct({ ...validProduct, imageUrl: "" }, imageFile)).toEqual({});
+  });
+
+  it("拒絕不支援的圖片格式", () => {
+    const imageFile = new File(["image"], "product.gif", { type: "image/gif" });
+    expect(validateProduct({ ...validProduct, imageUrl: "" }, imageFile)).toMatchObject({
+      imageFile: "僅支援 JPG、PNG 或 WebP 圖片。",
+    });
+  });
+
+  it("拒絕超過 5 MB 的圖片", () => {
+    const imageFile = new File([new Uint8Array(5 * 1024 * 1024 + 1)], "large.jpg", {
+      type: "image/jpeg",
+    });
+    expect(validateProduct({ ...validProduct, imageUrl: "" }, imageFile)).toMatchObject({
+      imageFile: "圖片大小不可超過 5 MB。",
     });
   });
 

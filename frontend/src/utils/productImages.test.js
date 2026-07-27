@@ -49,6 +49,12 @@ describe("getProductImageUrl", () => {
     );
   });
 
+  it("讓後端上傳圖片經由 Vite API proxy 載入", () => {
+    expect(getProductImageUrl({ imageUrl: "/product-images/generated.webp" })).toBe(
+      "/api/product-images/generated.webp",
+    );
+  });
+
   it("沒有圖片資料時回傳空字串", () => {
     expect(getProductImageUrl()).toBe("");
   });

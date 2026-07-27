@@ -1,14 +1,39 @@
 // 提供新增與編輯頁共用的商品欄位、錯誤關聯與圖片預覽。
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { categories, getCategoryLabel } from "../utils/categories";
 import { formatPrice } from "../utils/formatters";
+import { getProductImageUrl } from "../utils/productImages";
 import ProductImage from "./ProductImage";
 
-const fieldOrder = ["productName", "category", "imageUrl", "price", "stock"];
+const fieldOrder = ["productName", "category", "imageFile", "price", "stock"];
 
-function ProductForm({ values, errors, submitError, isSubmitting, submitLabel, onChange, onSubmit }) {
+function ProductForm({
+  values,
+  imageFile,
+  errors,
+  submitError,
+  isSubmitting,
+  submitLabel,
+  onChange,
+  onImageChange,
+  onSubmit,
+}) {
   const fieldRefs = useRef({});
+  const [previewImageUrl, setPreviewImageUrl] = useState(() => getProductImageUrl({
+    imageUrl: values.imageUrl,
+  }));
+
+  useEffect(() => {
+    if (!imageFile) {
+      setPreviewImageUrl(getProductImageUrl({ imageUrl: values.imageUrl }));
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(imageFile);
+    setPreviewImageUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [imageFile, values.imageUrl]);
 
   useEffect(() => {
     const firstError = fieldOrder.find((field) => errors[field]);
@@ -65,19 +90,25 @@ function ProductForm({ values, errors, submitError, isSubmitting, submitLabel, o
         </div>
 
         <div className="form-field admin-field-wide">
-          <label htmlFor="imageUrl">商品圖片網址</label>
+          <label htmlFor="imageFile">商品圖片</label>
           <input
-            {...fieldProps("imageUrl")}
-            ref={registerField("imageUrl")}
-            id="imageUrl"
-            type="url"
-            value={values.imageUrl}
-            onChange={(event) => onChange("imageUrl", event.target.value)}
-            placeholder="https://example.com/product.jpg"
-            autoComplete="url"
-            required
+            {...fieldProps("imageFile")}
+            ref={registerField("imageFile")}
+            id="imageFile"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-describedby={errors.imageFile ? "imageFile-error" : "imageFile-hint"}
+            onChange={(event) => onImageChange(event.target.files?.[0] ?? null)}
+            required={!values.imageUrl}
           />
-          {errors.imageUrl ? <p className="field-error" id="imageUrl-error">{errors.imageUrl}</p> : null}
+          <p className="field-hint" id="imageFile-hint">
+            {imageFile
+              ? `已選擇：${imageFile.name}`
+              : values.imageUrl
+                ? "目前使用既有圖片；選擇新檔後會在儲存時替換。"
+                : "支援 JPG、PNG、WebP，檔案大小上限 5 MB。"}
+          </p>
+          {errors.imageFile ? <p className="field-error" id="imageFile-error">{errors.imageFile}</p> : null}
         </div>
 
         <div className="form-field">
@@ -138,7 +169,7 @@ function ProductForm({ values, errors, submitError, isSubmitting, submitLabel, o
       <aside className="admin-product-preview" aria-label="商品預覽">
         <p className="eyebrow">LIVE PREVIEW</p>
         <div className="admin-preview-image">
-          <ProductImage key={values.imageUrl} src={values.imageUrl} alt={values.productName || "商品預覽"} />
+          <ProductImage key={previewImageUrl} src={previewImageUrl} alt={values.productName || "商品預覽"} />
         </div>
         <p className="product-category">{getCategoryLabel(values.category) || "尚未分類"}</p>
         <h2>{values.productName || "商品名稱將顯示在這裡"}</h2>

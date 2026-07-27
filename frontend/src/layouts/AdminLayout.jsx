@@ -1,4 +1,4 @@
-// 將商品管理 Demo 與消費者商城版型分離，並固定揭露目前沒有 RBAC。
+// 將商品管理 Demo 與消費者商城版型分離。
 import { Link, NavLink, Outlet } from "react-router";
 import ScrollToTop from "../components/ScrollToTop";
 
@@ -19,12 +19,6 @@ function AdminLayout() {
             <NavLink to="/admin/products" end>商品管理</NavLink>
             <Link to="/">返回商店</Link>
           </nav>
-        </div>
-        <div className="admin-security-note">
-          <div className="page-width">
-            <strong>管理 Demo</strong>
-            <span>本專案依決策不實作 RBAC；此介面僅展示商品 API，不代表具有真正管理員授權。</span>
-          </div>
         </div>
       </header>
 

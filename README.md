@@ -20,7 +20,7 @@
 
 - 商品列表、搜尋、分類、排序與分頁
 - 新增、修改與刪除商品
-- 表單驗證、圖片預覽與操作狀態回饋
+- 表單驗證、JPG／PNG／WebP 圖片上傳、即時預覽與操作狀態回饋
 - CSRF 保護的寫入請求
 - 介面持續揭露「未實作 RBAC」限制
 
@@ -275,6 +275,8 @@ CREATE DATABASE mall
 
 確認 [application.properties](springboot-mall/src/main/resources/application.properties) 的 MySQL 位址、帳號與密碼符合本機環境。不要將真實或正式環境密碼提交到 Git。
 
+商品圖片預設保存於 `springboot-mall/uploads/products/`。可用 `PRODUCT_IMAGE_STORAGE_DIR` 指定其他目錄；正式部署應指向持久磁碟，避免重新部署時遺失上傳圖片。
+
 ```powershell
 cd springboot-mall
 mvn spring-boot:run
@@ -322,9 +324,9 @@ mvn test
 
 目前已驗證：
 
-- 前端 13 個測試檔、49 個測試案例通過
+- 前端 15 個測試檔、60 個測試案例通過
 - 前端 lint 與正式建置通過
-- 後端 34 個測試通過
+- 後端 41 個測試通過
 - 正式環境 npm 相依性 0 項已知漏洞
 
 ## Session、CSRF 與權限界線
@@ -348,6 +350,8 @@ mvn test
 | `POST` | `/products` | 新增商品 Demo | 否；需 CSRF |
 | `PUT` | `/products/{productId}` | 修改商品 Demo | 否；需 CSRF |
 | `DELETE` | `/products/{productId}` | 刪除商品 Demo | 否；需 CSRF |
+| `POST` | `/product-images` | 上傳商品圖片（JPG／PNG／WebP，最多 5 MB） | 否；需 CSRF |
+| `GET` | `/product-images/{fileName}` | 讀取已上傳商品圖片 | 否 |
 | `POST` | `/users/register` | 註冊 | 否；需 CSRF |
 | `POST` | `/users/login` | 登入 | 否；需 CSRF |
 | `POST` | `/users/logout` | 登出 | 是；需 CSRF |
@@ -376,7 +380,7 @@ mvn test
 - 不提供 RBAC 或管理員角色；管理功能僅供作品展示。
 - 不包含真實金流、配送地址、優惠券、收藏、評論或第三方登入。
 - 後端既有商品仍保存舊外部 `imageUrl`；前端會將已盤點的 8 個網址替換成專案內原創素材，尚未進行資料庫遷移。
-- 目前沒有圖片上傳服務，商品表單使用 `imageUrl`。
+- 上傳圖片保存在後端本機檔案系統；正式部署需為 `PRODUCT_IMAGE_STORAGE_DIR` 掛載持久磁碟，目前未整合雲端物件儲存。
 - 目前沒有 Docker、CI/CD 或正式資料庫 migration。
 - 開發工具維持目前可正常測試與建置的版本，不規劃只為清除 dev-only audit 警告而進行主要版本升級。
 

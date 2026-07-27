@@ -16,6 +16,7 @@ dist/
 coverage/
 target/
 build/
+springboot-mall/uploads/
 
 # 暫存、快取與記錄檔
 *.log

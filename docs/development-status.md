@@ -1,6 +1,6 @@
 # E-Commerce 開發狀態
 
-> 更新日期：2026-07-26
+> 更新日期：2026-07-27
 > 專案目錄：`E-Commerce/`
 > 用途：記錄目前實際完成度、尚未完成項目與已確認的範圍決策。
 > 規格來源：功能與視覺基準仍以 [`frontend-design-plan.md`](./frontend-design-plan.md) 為主，本文件負責追蹤實作進度。
@@ -18,7 +18,7 @@
 
 Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員只能讀取或建立自己的訂單。依 2026-07-26 的決策，本專案不實作 RBAC，因此商品新增、修改與刪除仍沒有角色權限保護，管理介面只作為作品集 Demo。
 
-商品圖片替換、本機化與最終整合驗收均已完成；目前規劃範圍沒有未完成的必要功能。
+商品圖片替換、本機化與商品管理圖片上傳均已完成；目前規劃範圍沒有未完成的必要功能。
 
 ### 里程碑總覽
 
@@ -29,9 +29,9 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 | 購物與結帳 | 已完成 | 購物車保存、庫存重查、登入導向與建立訂單 |
 | 會員與 Session | 已完成 | 註冊、登入、登出、Session 還原與 CSRF |
 | 訂單 | 已完成 | 建立訂單、會員資料隔離與我的訂單 |
-| 商品管理 Demo | 已完成 | 列表、新增、修改、刪除、表單驗證與無 RBAC 揭露 |
+| 商品管理 Demo | 已完成 | 列表、新增、修改、刪除、圖片上傳與表單驗證 |
 | 響應式與可用性 | 已完成 | 1440px、768px、390px 的 11 條主要路由皆無水平溢位，焦點與 ARIA 基礎已驗證 |
-| 圖片與內容授權 | 已完成（前端） | 已建立 8 張原創本機圖，依舊 CDN 網址在前端替換顯示；後端資料未修改 |
+| 圖片與內容授權 | 已完成 | 已建立 8 張原創本機圖，並支援 JPG／PNG／WebP 商品圖片上傳 |
 | 前端自動化測試 | 核心完成 | 商品管理、會員、購物車、結帳與訂單列表皆有 jsdom 自動化測試 |
 | 前端相依性安全 | 已完成（正式環境） | React Router 已升級至 8.3.0；正式環境 0 項漏洞，開發工具依目前決策不升級 |
 | README 與交付文件 | 已完成 | 已補齊前後端啟動、安全機制、資料庫重建、API、驗證方式與功能限制 |
@@ -108,6 +108,9 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 刪除前顯示包含商品名稱與不可復原警告的確認提示。
 - [x] 在頁尾加入「管理 Demo」入口，管理版面持續揭露本專案沒有 RBAC。
 - [x] 管理列表與表單包含載入、錯誤、空資料、成功回饋及送出中狀態。
+- [x] 商品表單改為圖片選擇器，支援 5 MB 以內的 JPG、PNG、WebP，上傳前可即時預覽。
+- [x] 新增具 CSRF 保護的圖片上傳 API 與圖片讀取 API；檔案保存目錄可由環境變數設定。
+- [x] 編輯商品未選新圖時保留既有圖片，選擇新圖時先上傳再更新商品 `imageUrl`。
 
 ### 2.7 響應式與可用性基礎
 
@@ -128,10 +131,10 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 |---|---|
 | `npm run lint` | 通過 |
 | `npm run build` | 通過，Vite 成功產生正式建置 |
-| `npm test` | 通過，15 個測試檔、54 個測試案例 |
+| `npm test` | 通過，15 個測試檔、60 個測試案例 |
 | `npm audit --omit=dev` | 通過，正式環境相依性 0 項漏洞 |
 | `npm audit` | React Router 公告已排除；剩餘 5 項 high 皆位於 ESLint／minimatch 開發工具相依路徑 |
-| `mvn test` | 通過，共 34 項測試，0 failures、0 errors |
+| `mvn test` | 通過，共 41 項測試，0 failures、0 errors |
 | `git diff --check` | 通過，沒有空白或 conflict marker 錯誤 |
 | 瀏覽器手動檢查 | 1440px、768px、390px 下 11 條主要路由皆無水平溢位；本機商品圖正常且正式顯示頁未載入舊 CDN；商品加入購物袋、未登入導向、註冊、登入、Session 還原、建立訂單、訂單重新載入與 skip link 目標焦點通過；2026-07-27 另驗證商品達購買上限時提示可見、加入按鈕停用且數量欄位隱藏，console 無 error／warning |
 
@@ -150,6 +153,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 測試我的訂單頁會員確認、未登入導向、載入、空資料、訂單內容、成功提示與分頁。
 - [x] 測試訂單列表 API 錯誤重試及 401 Session 過期時清除會員狀態。
 - [x] 測試商城／管理 Demo 的 skip link 目標可聚焦，以及 404 頁具有頁面主標題與返回入口。
+- [x] 測試圖片格式、大小、multipart 與 CSRF，上傳路徑轉換、選檔預覽及新增／編輯商品串接。
 
 ## 3. 收尾狀態
 
@@ -160,7 +164,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - [x] 查核 Pixabay 最新官方授權摘要與服務條款，確認品牌／商標、誤導用途與第三方權利限制。
 - [x] 建立 8 張內容相符的原創替換圖；汽車素材採無標誌、無車牌、無人物的通用造型。
 - [x] 保存本機副本，並以舊 CDN 完整網址建立前端顯示對照，避免正式頁面依賴外部熱連結。
-- [x] 保留後端原始 `imageUrl` 與管理表單輸入值；本次不修改 Spring Boot 或資料庫。
+- [x] 保留既有商品的舊 `imageUrl` 映射；新上傳圖片由後端產生相對路徑，資料表結構不需修改。
 
 ### 3.2 文件與最終驗收
 
@@ -180,6 +184,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 - 首頁不顯示「依生活場景瀏覽／今天想找什麼？」分類區塊。
 - 頁首導覽不顯示「食物」、「交通」、「書籍」三個分類連結。
+- 商品管理頁不顯示頂部「管理 Demo」提示列與頁面內的無 RBAC 說明卡。
 - 商品分類功能仍保留在商品列表的篩選控制中。
 
 ## 5. 暫不實作
@@ -190,7 +195,6 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 - JWT；目前維持 Spring Security Session。
 - 舊 MD5 密碼相容或資料移轉。
 - 真實金流、配送地址、優惠券、收藏、評論與第三方登入。
-- 商品圖片上傳服務；商品管理先使用 `imageUrl`。
 - Spring Boot Controller → Service → DAO 架構重整。
 - ESLint 10 與只為排除 dev-only audit 警告的開發工具主要版本升級；目前 lint、test 與 build 均可正常執行。
 
@@ -198,7 +202,7 @@ Spring Boot 後端已導入 Spring Security、BCrypt、CSRF 與 Session，會員
 
 ## 6. 建議後續順序
 
-目前規劃範圍已完成。若後續要擴充部署、金流、配送、圖片上傳或權限功能，應先重新確認需求與後端變更範圍。
+目前規劃範圍已完成。若後續要擴充部署、雲端物件儲存、金流、配送或權限功能，應先重新確認需求與後端變更範圍。
 
 ## 7. 本機開發指令
 
